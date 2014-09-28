@@ -1,4 +1,8 @@
-module Structure where
+module Structure (
+  Event(..),
+  Beat(..),
+  Music(..)
+) where
 import Note
 
 data Event = Rest | Note Note deriving (Eq, Show)

@@ -1,6 +1,6 @@
 module MelodyTests (
-        tests
-    ) where
+    tests
+  ) where
 import Test.HUnit
 import Note
 import Structure
@@ -8,8 +8,8 @@ import Report
 import Melody
 
 tests = TestLabel "Melody" $ TestList
-    [ testRuleH89
-    ]
+  [ testRuleH89
+  ]
 
 beat p o = Beat (Note $ p Nat o) []
 
@@ -21,10 +21,10 @@ b = beat B 4
 r = Beat Rest []
 
 testRuleH89 = TestLabel "ruleH89" $ TestList
-    [ test []                                                                $ Music [c, d]
-    , test [Error (Harmony 89) (Context 0 1) "Dissonance Major7"]            $ Music [c, b]
-    , test []                                                                $ Music [beat B 3, beat C 4]
-    , test [Error (Harmony 89) (Context 0 1) "Dissonance -Major7"]           $ Music [b, c]
-    , test [Error (Harmony 89) (Context 1 2) "Dissonance Major7"]            $ Music [d, c, b]
-    ] where
-        test e s = show s ~: e ~=? analyse s
+  [ test []                                                                $ Music [c, d]
+  , test [Error (Harmony 89) (Context 0 1) "Dissonance Major7"]            $ Music [c, b]
+  , test []                                                                $ Music [beat B 3, beat C 4]
+  , test [Error (Harmony 89) (Context 0 1) "Dissonance -Major7"]           $ Music [b, c]
+  , test [Error (Harmony 89) (Context 1 2) "Dissonance Major7"]            $ Music [d, c, b]
+  ] where
+    test e s = show s ~: e ~=? analyse s

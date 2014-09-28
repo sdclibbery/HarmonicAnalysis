@@ -2,15 +2,14 @@ import Test.HUnit
 import qualified MelodyTests
 
 {- TODO:
+* Add haddock comments
+* Rule 89
+  * ?? Should test incidentals?? What about rests??
+* Do a harmonic test next
  * DataStructures
-  x Pull out modules
-  * Export only whats required from each module
   * Input data is array of parts
   * Can then get single parts or pairs of parts
    * And in such a way that you can zipper through them 'in unison'
-** Rule 89
-  * ?? Should test incidentals?? What about rests??
-  Do a harmonic test next
 * Then back to Rule 90...
 -}
 

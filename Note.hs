@@ -1,4 +1,12 @@
-module Note where
+module Note (
+  Alter(..),
+  Note(..),
+  diatonic,
+  chromatic,
+  octave,
+  absChromatic,
+  absDiatonic
+) where
 
 data Alter = DFl | Fl | Nat | Sh | DSh deriving (Eq, Ord, Show, Enum)
 

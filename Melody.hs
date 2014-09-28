@@ -1,4 +1,6 @@
-module Melody where
+module Melody (
+  analyse
+) where
 import Note
 import Interval
 import Structure

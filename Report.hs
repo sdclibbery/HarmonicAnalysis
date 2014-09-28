@@ -1,4 +1,8 @@
-module Report where
+module Report (
+  Ref(..),
+  Context(..),
+  Report(..)
+) where
 
 data Ref = Harmony Int deriving (Eq, Show)
 

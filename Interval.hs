@@ -1,17 +1,31 @@
-module Interval where
+module Interval (
+  Interval,
+  interval,
+
+  Quality(..),
+  quality,
+
+  step,
+  consonant,
+  dissonant,
+  diminished,
+  augmented
+) where
 import Note
+
 
 data Interval = Interval {dia :: Int, chr :: Int, oct :: Int} deriving (Eq)
 
-data Quality = Perfect | Major | Minor | Diminished | Augmented deriving (Eq, Show)
+interval :: Note -> Note -> Interval
+interval n n' = Interval (absDiatonic n' - absDiatonic n) (absChromatic n' - absChromatic n) (octave n' - octave n)
 
 instance Show Interval where
   show i = sign ++ (show $ quality i) ++ (show $ abs(dia i) + 1)
     where
       sign = if dia i < 0 then "-" else ""
 
-interval :: Note -> Note -> Interval
-interval n n' = Interval (absDiatonic n' - absDiatonic n) (absChromatic n' - absChromatic n) (octave n' - octave n)
+
+data Quality = Perfect | Major | Minor | Diminished | Augmented deriving (Eq, Show)
 
 quality :: Interval -> Quality
 quality (Interval 0 (-1) 0) = Diminished
@@ -42,6 +56,7 @@ quality (Interval 6 12 0) = Augmented
 quality (Interval d c o) | d < 0 = quality (Interval (-d) (-c) (-o))
 quality (Interval d c o) | o > 0 = quality (Interval d c (o-1))
 quality _ = Diminished
+
 
 step :: Note -> Note -> Bool
 step n n' = abs(absDiatonic n' - absDiatonic n) == 1
