@@ -2,6 +2,9 @@ module MelodyTests (
         tests
     ) where
 import Test.HUnit
+import Note
+import Structure
+import Report
 import Melody
 
 tests = TestLabel "Melody" $ TestList
