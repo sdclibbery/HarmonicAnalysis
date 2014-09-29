@@ -2,7 +2,6 @@ import Test.HUnit
 import qualified MelodyTests
 
 {- TODO:
-* Add haddock comments
 * Rule 89
   * ?? Should test incidentals?? What about rests??
 * Do a harmonic test next
