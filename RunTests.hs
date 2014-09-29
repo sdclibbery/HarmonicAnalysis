@@ -3,8 +3,7 @@ import qualified MelodyTests
 
 {- TODO:
 * DataStructures
- * Input data is array of parts
- * Can then get single parts or pairs of parts
+ * Can then extract single parts or pairs of parts
   * And in such a way that you can zipper through them 'in unison'
 * Rule 89
   * ?? Should test incidentals?? What about rests??
