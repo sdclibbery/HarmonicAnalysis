@@ -12,5 +12,5 @@ import qualified MelodyTests
 -}
 
 main = runTestTT $ TestList
-        [ MelodyTests.tests
-        ]
+  [ MelodyTests.tests
+  ]

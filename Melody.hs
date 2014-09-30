@@ -18,11 +18,11 @@ import Data.Maybe
 
 -- |Analyse a score, applying the melodic analysis rules
 analyse :: Music -> [Report]
-analyse (Music ps) = concatMap analysePart $ zip [0..] ps
+analyse = concatMap analysePart
   where
-    analysePart (i, p) = catMaybes $ map (rule89 i) $ zip3 [0..] p $ drop 1 p
+    analysePart (Part p bs) = catMaybes $ map (rule89 p) $ zip3 [0..] bs $ drop 1 bs
 
-rule89 :: Int -> (Int, Beat, Beat) -> Maybe Report
+rule89 :: String -> (Int, Beat, Beat) -> Maybe Report
 rule89 _ (i, Beat Rest _, Beat _ _) = Nothing
 rule89 _ (i, Beat _ _, Beat Rest _) = Nothing
 rule89 _ (i, Beat (Note n) _, Beat (Note n') _) | step n n' = Nothing
