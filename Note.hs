@@ -10,8 +10,7 @@ module Note (
   chromatic,
   octave,
   absChromatic,
-  absDiatonic,
-  step
+  absDiatonic
 ) where
 
 -- |Note alteration: sharpening or flattening
@@ -63,8 +62,4 @@ absChromatic n = octave n * 12 + chromatic n
 -- |Get the number of diatones from (C Nat 0)
 absDiatonic :: Note -> Int
 absDiatonic n = octave n * 7 + diatonic n
-
--- |Check if two notes are a step apart (ie if they are one diatone apart)
-step :: Note -> Note -> Bool
-step n n' = abs(absDiatonic n' - absDiatonic n) == 1
 

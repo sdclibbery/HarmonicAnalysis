@@ -4,26 +4,30 @@ Description : Definition of musical structure for use in harmonic analysis
 -}
 
 module Structure (
-  Event(..),
-  Beat(..),
+  Time(..),
   PartName,
+  Event(..),
   Part(..),
-  Music(..)
+  Music(..),
 ) where
 import Note
+import Data.List
+import Data.Ord
 
--- |Musical event
-data Event = Rest | Note Note deriving (Eq, Show)
-
--- |Description of whats happening on one beat of the music
-data Beat = Beat { event :: Event, incidental :: [Note] } deriving (Eq, Show)
+-- |Time type
+type Time = Rational
 
 -- |Part name
 type PartName = String
 
--- |A musical part made up from a list of beats
-data Part = Part { name :: PartName, beats :: [Beat] } deriving (Eq, Show)
+-- |One note or rest in a part
+data Event = Rest Time | Note Time Note deriving (Eq, Show)
 
--- |Entire music. A list of parts in ascending order from bass to treble
-type Music = [Part]
+-- |List of notes and rests in sequence
+data Part = Part { name :: PartName, events :: [Event] } deriving (Eq, Show)
 
+-- |Entire music made up of a list of parts in order from bass to treble
+data Music = Music [Part] deriving (Eq, Show)
+
+-- runs function to get list of note zippers with context for each note and the part they're from
+-- Then stuff to 

@@ -13,7 +13,8 @@ module Interval (
   consonant,
   dissonant,
   diminished,
-  augmented
+  augmented,
+  step
 ) where
 import Note
 
@@ -81,3 +82,7 @@ diminished i = quality i == Diminished
 -- |Check if an interval is augmented
 augmented :: Interval -> Bool
 augmented i = quality i == Augmented
+
+-- |Check if an interval is a step
+step :: Interval -> Bool
+step i = abs(dia i) == 1

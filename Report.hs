@@ -15,7 +15,7 @@ import Structure
 data Ref = Harmony Int deriving (Eq, Show)
 
 -- |A location in the source music: start and end beat
-data Source = Source { part :: PartName, start :: Int, end :: Int } deriving (Eq, Show)
+data Source = Source { part :: PartName, start :: Time, end :: Time } deriving (Eq, Show)
 
 -- |The message report
 type Message = String
