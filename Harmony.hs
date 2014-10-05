@@ -34,7 +34,7 @@ analyse (Music ps) = concatMap (analysePart . Z.fromList . annotated) $ ps
 -- Consecutive unisons are bad
 ruleH96 :: Z.Zipper ANote -> Maybe R.Report
 ruleH96 z
-  | otherwise     = Just $ R.Error (R.Harmony 96) (R.Source part s e) $ "Consecutive unisons"
+  | otherwise     = Just $ R.Error (R.Harmony 96) (R.Source [part] s e) $ "Consecutive unisons"
     where
       (i, part, s, e) = getBasicInfo z
 

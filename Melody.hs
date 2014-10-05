@@ -38,7 +38,7 @@ ruleH89 z
   | consonant i   = Nothing
   | diminished i  = Nothing -- Leave for rule 90
   | augmented i   = Nothing -- Leave for rule 91
-  | otherwise     = Just $ R.Error (R.Harmony 89) (R.Source part s e) $ "Dissonance " ++ show i
+  | otherwise     = Just $ R.Error (R.Harmony 89) (R.Source [part] s e) $ "Dissonance " ++ show i
     where
       (i, part, s, e) = getBasicInfo z
 
