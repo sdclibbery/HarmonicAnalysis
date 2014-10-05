@@ -28,6 +28,3 @@ data Part = Part { name :: PartName, events :: [Event] } deriving (Eq, Show)
 
 -- |Entire music made up of a list of parts in order from bass to treble
 data Music = Music [Part] deriving (Eq, Show)
-
--- runs function to get list of note zippers with context for each note and the part they're from
--- Then stuff to 
