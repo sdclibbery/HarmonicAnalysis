@@ -21,22 +21,21 @@ import Control.Applicative
 
 -- |Analyse a score, applying the harmonic analysis rules
 analyse :: Music -> [R.Report]
-analyse (Music ps) = concatMap (analysePart . Z.fromList . annotated) $ ps
+analyse (Music ps) = concatMap analysePart $ allPairs $ map (Z.fromList . annotated) ps
   where
-    analysePart z = catMaybes $ concat $ mapPairs <$> rules <*> (splitZipper rests z)
-    rests a a' = isRest (event a) || isRest (event a')
-    isRest (Rest _) = True
-    isRest _ = False
+    analysePart zp = catMaybes $ walkZippers ruleH96 zp
+--    analysePart zp = catMaybes $ concat $ walkZippers <$> rules <*> zp
     rules = [ruleH96]
 
 
 -- Analysis of Music according to Section 96 in Prouts Harmony
 -- Consecutive unisons are bad
-ruleH96 :: Z.Zipper ANote -> Maybe R.Report
-ruleH96 z
-  | otherwise     = Just $ R.Error (R.Harmony 96) (R.Source [part] s e) $ "Consecutive unisons"
-    where
-      (i, part, s, e) = getBasicInfo z
+ruleH96 :: (Z.Zipper ANote, Z.Zipper ANote) -> Maybe R.Report
+ruleH96 (z, z')
+  | unison i && unison i2 = Just $ R.Error (R.Harmony 96) (R.Source ps s e) $ "Consecutive unisons"
+  | otherwise             = Nothing
+  where
+    (i, i2, ps, s, e) = getBasicInfo z z'
 
 
 data ANote = ANote { start :: Time, end :: Time, part :: PartName, event :: Event }
@@ -48,11 +47,14 @@ annotated (Part p es) = snd $ foldl ann (0, []) es
     dur (Rest d) = d
     dur (Note d _) = d
 
-getBasicInfo :: Z.Zipper ANote -> (Interval, PartName, Time, Time)
-getBasicInfo z = (interval (note l) (note r), part l, start l, end r)
+getBasicInfo :: Z.Zipper ANote -> Z.Zipper ANote -> (Interval, Interval, [PartName], Time, Time)
+getBasicInfo z z' = (interval (note l) (note l'), interval (note r) (note r'), [part l, part l'], s, e)
   where
     note (ANote _ _ _ (Note _ n)) = n
     (_, l, r, _) = getContext z
+    (_, l', r', _) = getContext z'
+    s = max (start l) (start l')
+    e = min (end r) (end r')
 
 getContext :: Z.Zipper a -> (Maybe a, a, a, Maybe a)
 getContext z = (l2, l, r, r2)
@@ -62,13 +64,14 @@ getContext z = (l2, l, r, r2)
         r = Z.cursor $ Z.right z
         r2 = Z.safeCursor $ Z.right $ Z.right z
 
-splitZipper :: (a -> a -> Bool) -> Z.Zipper a -> [Z.Zipper a]
-splitZipper p z@(Z.Zip ls rs)
-  | Z.endp z = [Z.fromList $ reverse ls]
-  | Z.beginp z = splitZipper p $ Z.right z
-  | otherwise = if p (head ls) (head rs) then Z.fromList (reverse ls) : splitZipper p (Z.fromList rs) else splitZipper p $ Z.right z
+walkZippers :: ((Z.Zipper ANote, Z.Zipper ANote) -> b) -> (Z.Zipper ANote, Z.Zipper ANote) -> [b]
+walkZippers f (z, z')
+  | Z.endp z || Z.endp z' = []
+  | (Z.endp $ Z.right z) || (Z.endp $ Z.right z') = []
+  | (end $ Z.cursor z) < (end $ Z.cursor z') = f (z, z') : walkZippers f (Z.right z, z')
+  | (end $ Z.cursor z) > (end $ Z.cursor z') = f (z, z') : walkZippers f (z, Z.right z')
+  | otherwise                                = f (z, z') : walkZippers f (Z.right z, Z.right z')
 
-mapPairs :: (Z.Zipper a -> b) -> Z.Zipper a -> [b]
-mapPairs f = Z.foldrz foldit []
-  where
-    foldit z rs = if Z.endp $ Z.right z then rs else f z : rs
+allPairs :: [a] -> [(a, a)]
+allPairs [] = []
+allPairs xxs@(x:xs) = zip (repeat x) xs ++ allPairs xs
