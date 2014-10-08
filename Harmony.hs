@@ -21,12 +21,11 @@ import Control.Applicative
 
 -- |Analyse a score, applying the harmonic analysis rules
 analyse :: Music -> [R.Report]
-analyse (Music ps) = concatMap analysePart $ allPairs $ map (Z.fromList . annotated) ps
+analyse (Music ps) = catMaybes $ concat $ applyRules $ pairsOfPartZippers ps
   where
-    analysePart zp = catMaybes $ walkZippers ruleH96 zp
---    analysePart zp = catMaybes $ concat $ walkZippers <$> rules <*> zp
+    pairsOfPartZippers = allPairs . map (Z.fromList . annotated)
+    applyRules zps = walkZippers <$> rules <*> zps
     rules = [ruleH96]
-
 
 -- Analysis of Music according to Section 96 in Prouts Harmony
 -- Consecutive unisons are bad
