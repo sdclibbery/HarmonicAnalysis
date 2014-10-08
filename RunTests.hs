@@ -3,6 +3,7 @@ import qualified MelodyTests
 import qualified HarmonyTests
 
 {- TODO:
+x Harmonic analysis needs to handle rests
 * Then back to Rule 90...
 -}
 

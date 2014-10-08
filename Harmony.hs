@@ -67,9 +67,18 @@ walkZippers :: ((Z.Zipper ANote, Z.Zipper ANote) -> b) -> (Z.Zipper ANote, Z.Zip
 walkZippers f (z, z')
   | Z.endp z || Z.endp z' = []
   | (Z.endp $ Z.right z) || (Z.endp $ Z.right z') = []
-  | (end $ Z.cursor z) < (end $ Z.cursor z') = f (z, z') : walkZippers f (Z.right z, z')
-  | (end $ Z.cursor z) > (end $ Z.cursor z') = f (z, z') : walkZippers f (z, Z.right z')
-  | otherwise                                = f (z, z') : walkZippers f (Z.right z, Z.right z')
+  | rest z || rest z' = recurse
+  | rest (Z.right z) || rest (Z.right z') = recurse
+  | otherwise = apply : recurse
+    where
+      rest = isRest . event . Z.cursor 
+      isRest (Rest _) = True
+      isRest _ = False
+      apply = f (z, z')
+      recurse
+        | (end $ Z.cursor z) < (end $ Z.cursor z') = walkZippers f (Z.right z, z')
+        | (end $ Z.cursor z) > (end $ Z.cursor z') = walkZippers f (z, Z.right z')
+        | otherwise                                = walkZippers f (Z.right z, Z.right z')
 
 allPairs :: [a] -> [(a, a)]
 allPairs [] = []

@@ -25,6 +25,8 @@ testRuleH96 = TestLabel "ruleH96" $ TestList
     , test []                                                                      $ music [c, d] [c, e]
     , test []                                                                      $ music [c, d] [d, d]
     , test [Error (Harmony 96) (Source ["p", "p2"] 0 2) "Consecutive unisons"]     $ music [c, d] [c, d]
+    , test []                                                                      $ music [c, d] [c, r, d]
+    , test [Error (Harmony 96) (Source ["p", "p2"] 1 3) "Consecutive unisons"]     $ music [r, c, d, r] [r, c, d, r]
     , test []                                                                      $ music [c, d] [b, c, d]
     , test [Error (Harmony 96) (Source ["p", "p2"] 1 3) "Consecutive unisons"]     $ music [d, c, d, d] [b, c, d, b]
     ] where
