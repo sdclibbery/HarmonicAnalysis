@@ -27,7 +27,7 @@ analyse (Music ps) = concatMap (analysePart . Z.fromList . annotated) $ ps
     rests a a' = isRest (event a) || isRest (event a')
     isRest (Rest _) = True
     isRest _ = False
-    rules = [ruleH89]
+    rules = [ruleH89, ruleH90]
 
 
 -- Analysis of Music according to Section 89 in Prouts Harmony
@@ -41,6 +41,34 @@ ruleH89 z
   | otherwise     = Just $ R.Error (R.Harmony 89) (R.Source [part] s e) $ "Dissonance " ++ show i
     where
       (i, part, s, e) = getBasicInfo z
+
+-- Analysis of Music according to Section 90 in Prouts Harmony
+-- A diminished interval must be resolved correctly
+ruleH90 :: Z.Zipper ANote -> Maybe R.Report
+ruleH90 z
+  | diminished i = evaluate
+  | otherwise    = Nothing
+    where
+      (i, part, s, e) = getBasicInfo z
+      (l2, l, r, r2) = getContext z
+      evaluate
+        | isNothing r2 = Just $ R.Warning (R.Harmony 90) (R.Source [part] s e) $ show i
+        | outside l r (fromJust r2) = Just $ R.Error (R.Harmony 90) (R.Source [part] s e) $ "Outside " ++ show i
+        | resolved l r $ fromJust r2 = Nothing
+        | otherwise = Just $ R.Error (R.Harmony 90) (R.Source [part] s e) $ "Unresolved " ++ show i
+      resolved a1 a2 a = second i && minor i -- Resolution to a diminished is a semitone in each side
+        where
+          [n1, n2, n] = fmap (note . event) [a1, a2, a]
+          i = interval n2 n
+
+
+outside :: ANote -> ANote -> ANote -> Bool
+outside a1 a2 a = n <= min n1 n2 || n >= max n1 n2
+  where
+    [n1, n2, n] = fmap (note . event) [a1, a2, a]
+
+note :: Event -> Note
+note (Note _ n) = n
 
 
 data ANote = ANote { start :: Time, end :: Time, part :: PartName, event :: Event }

@@ -17,10 +17,13 @@ module Note (
 data Alter = DFl | Fl | Nat | Sh | DSh deriving (Eq, Ord, Show, Enum)
 
 -- |Musical Note: Base pitch class, alteration, and octave
-data Note = C Alter Int | D Alter Int | E Alter Int | F Alter Int | G Alter Int | A Alter Int | B Alter Int deriving (Eq, Show)
+data Note = C Alter Int | D Alter Int | E Alter Int | F Alter Int | G Alter Int | A Alter Int | B Alter Int deriving (Show)
+
+instance Eq Note where
+  n == n' = absChromatic n == absChromatic n'
 
 instance Ord Note where
-  n < n' = absChromatic n < absChromatic n'
+  n `compare` n' = absChromatic n `compare` absChromatic n'
 
 alteration :: Alter -> Int
 alteration a = fromEnum a - 2

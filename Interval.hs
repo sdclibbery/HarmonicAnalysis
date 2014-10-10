@@ -13,8 +13,10 @@ module Interval (
   consonant,
   dissonant,
   diminished,
+  minor,
   augmented,
   unison,
+  second,
   step
 ) where
 import Note
@@ -63,7 +65,6 @@ quality (Interval 6 11 0) = Major
 quality (Interval 6 12 0) = Augmented
 quality (Interval d c o) | d < 0 = quality (Interval (-d) (-c) (-o))
 quality (Interval d c o) | o > 0 = quality (Interval d c (o-1))
-quality _ = Diminished
 
 -- |Check if an interval is dissonant
 dissonant :: Interval -> Bool
@@ -80,6 +81,10 @@ consonant = not . dissonant
 diminished :: Interval -> Bool
 diminished i = quality i == Diminished
 
+-- |Check if an interval is minor
+minor :: Interval -> Bool
+minor i = quality i == Minor
+
 -- |Check if an interval is augmented
 augmented :: Interval -> Bool
 augmented i = quality i == Augmented
@@ -87,6 +92,10 @@ augmented i = quality i == Augmented
 -- |Check if an interval is a unison
 unison :: Interval -> Bool
 unison i = abs(dia i) == 0
+
+-- |Check if an interval is a second
+second :: Interval -> Bool
+second i = abs(dia i) == 1
 
 -- |Check if an interval is a step
 step :: Interval -> Bool
