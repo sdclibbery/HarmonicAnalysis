@@ -21,12 +21,10 @@ import Control.Applicative
 
 -- |Analyse a score, applying the melodic analysis rules
 analyse :: Music -> [R.Report]
-analyse (Music ps) = concatMap (analysePart . Z.fromList . annotated) $ ps
+analyse (Music ps) = catMaybes $ concat $ applyRules $ partZippers ps
   where
-    analysePart z = catMaybes $ concat $ mapPairs <$> rules <*> (splitZipper rests z)
-    rests a a' = isRest (event a) || isRest (event a')
-    isRest (Rest _) = True
-    isRest _ = False
+    partZippers = map (Z.fromList . annotated)
+    applyRules zs = walkZipper <$> rules <*> zs
     rules = [ruleH89, ruleH90]
 
 
@@ -94,13 +92,16 @@ getContext z = (l2, l, r, r2)
     r = Z.cursor $ Z.right z
     r2 = Z.safeCursor $ Z.right $ Z.right z
 
-splitZipper :: (a -> a -> Bool) -> Z.Zipper a -> [Z.Zipper a]
-splitZipper p z@(Z.Zip ls rs)
-  | Z.endp z = [Z.fromList $ reverse ls]
-  | Z.beginp z = splitZipper p $ Z.right z
-  | otherwise = if p (head ls) (head rs) then Z.fromList (reverse ls) : splitZipper p (Z.fromList rs) else splitZipper p $ Z.right z
-
-mapPairs :: (Z.Zipper a -> b) -> Z.Zipper a -> [b]
-mapPairs f = Z.foldrz foldit []
-  where
-    foldit z rs = if Z.endp $ Z.right z then rs else f z : rs
+walkZipper :: (Z.Zipper ANote -> b) -> Z.Zipper ANote -> [b]
+walkZipper f z
+  | Z.endp z = []
+  | Z.endp $ Z.right z = []
+  | rest z = recurse
+  | rest (Z.right z) = recurse
+  | otherwise = apply : recurse
+    where
+      rest = isRest . event . Z.cursor 
+      isRest (Rest _) = True
+      isRest _ = False
+      apply = f z
+      recurse = walkZipper f $ Z.right z
