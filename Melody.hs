@@ -56,7 +56,7 @@ ruleH90 z
         | outside l r (fromJust r2) = Just $ R.Error (R.Harmony 90) (R.Source [part] s e) $ "Outside " ++ show i
         | resolved l r $ fromJust r2 = Nothing
         | otherwise = Just $ R.Error (R.Harmony 90) (R.Source [part] s e) $ "Unresolved " ++ show i
-      resolved a1 a2 a = second i && minor i -- Resolution to a diminished is a semitone in each side
+      resolved a1 a2 a = second i && minor i -- Resolution to a diminished is a semitone in from the last note
         where
           [n1, n2, n] = fmap (note . event) [a1, a2, a]
           i = interval n2 n
@@ -89,10 +89,10 @@ getBasicInfo z = (interval (note l) (note r), part l, start l, end r)
 getContext :: Z.Zipper a -> (Maybe a, a, a, Maybe a)
 getContext z = (l2, l, r, r2)
   where
-        l2 = if Z.beginp z then Nothing else Z.safeCursor $ Z.left z
-        l = Z.cursor z
-        r = Z.cursor $ Z.right z
-        r2 = Z.safeCursor $ Z.right $ Z.right z
+    l2 = if Z.beginp z then Nothing else Z.safeCursor $ Z.left z
+    l = Z.cursor z
+    r = Z.cursor $ Z.right z
+    r2 = Z.safeCursor $ Z.right $ Z.right z
 
 splitZipper :: (a -> a -> Bool) -> Z.Zipper a -> [Z.Zipper a]
 splitZipper p z@(Z.Zip ls rs)
