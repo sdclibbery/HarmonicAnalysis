@@ -1,0 +1,72 @@
+import Codec.Midi
+import Data.List
+import Structure
+import Note
+
+-- TODO: Duration
+-- TODO: Rests
+-- TODO: Instruments..?
+
+
+b_, c, d, e, f, g, a, b, c', d', e', f', g', a', b', r :: Event
+b_ = Note 1 $ B Nat 3
+c = Note 1 $ C Nat 4
+d = Note 1 $ D Nat 4
+e = Note 1 $ E Nat 4
+f = Note 1 $ F Nat 4
+g = Note 1 $ G Nat 4
+a = Note 1 $ A Nat 4
+b = Note 1 $ B Nat 4
+c' = Note 1 $ C Nat 5
+d' = Note 1 $ D Nat 5
+e' = Note 1 $ E Nat 5
+f' = Note 1 $ F Nat 5
+g' = Note 1 $ G Nat 5
+a' = Note 1 $ A Nat 5
+b' = Note 1 $ B Nat 5
+r = Rest 1
+
+--main = createMidi "test.midi" $ music [ [c, d], [e, f], [g, a] ]
+
+main = createMidi "test.midi" $ music [ [c, d, g, a, c', b, a, g, f, d, b_, c] ]
+
+
+
+music ess = Music $ map makePart ess
+  where
+    makePart es = Part "p" es
+
+type Pitch = Int
+type MidiEvent = (Ticks, Message)
+
+makeTrack :: Part -> (Track Ticks)
+makeTrack (Part p es) = [
+   (0,ChannelPrefix 0),
+   (0,TrackName " Grand Piano  "),
+   (0,InstrumentName "GM Device  1"),
+   (0,TimeSignature 4 2 24 8),
+   (0,KeySignature 0 0)
+  ]
+  ++
+  concatMap playEvent es
+  ++
+  [
+   (1000,TrackEnd)
+  ]
+
+playEvent :: Event -> (Track Ticks)
+--playEvent (Rest d) = 
+playEvent (Note d n) = playnote $ absChromatic n
+
+playnote :: Pitch -> Track Ticks
+playnote k = [ keydown k, keyup k]
+  where
+    keydown k = (0, NoteOn {channel = 0, key = k, velocity = 120})
+    keyup k = (480, NoteOn {channel = 0, key = k, velocity = 0})
+
+createMidi :: FilePath -> Music -> IO()
+createMidi f (Music ps) = exportFile f $ Midi {
+         fileType = MultiTrack, 
+         timeDiv = TicksPerBeat 480, 
+         tracks = map makeTrack ps
+       }
