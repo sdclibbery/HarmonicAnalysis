@@ -9,6 +9,7 @@ module Note (
   diatonic,
   chromatic,
   octave,
+  modifyOctave,
   absChromatic,
   absDiatonic
 ) where
@@ -57,6 +58,16 @@ octave (F _ o) = o
 octave (G _ o) = o
 octave (A _ o) = o
 octave (B _ o) = o
+
+-- |Modify the octave for a note
+modifyOctave :: Int -> Note -> Note
+modifyOctave d (C a o) = C a (o + d)
+modifyOctave d (D a o) = D a (o + d)
+modifyOctave d (E a o) = E a (o + d)
+modifyOctave d (F a o) = F a (o + d)
+modifyOctave d (G a o) = G a (o + d)
+modifyOctave d (A a o) = A a (o + d)
+modifyOctave d (B a o) = B a (o + d)
 
 -- |Get the number of semitones from (C Nat 0)
 absChromatic :: Note -> Int

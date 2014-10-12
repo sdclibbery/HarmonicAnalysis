@@ -2,39 +2,12 @@ import Codec.Midi
 import Data.List
 import Structure
 import Note
+import Compose
 
--- TODO: Duration
--- TODO: Rests
--- TODO: Instruments..?
+--main = createMidi "test.midi" $ music [ [c, d].>>2, [e, f].>>2, [g, a].>>2 ]
 
+main = createMidi "test.midi" $ music [ [c, d, g, a, c'.>2, b, a, g, f, d, b_, c.>4] ]
 
-b_, c, d, e, f, g, a, b, c', d', e', f', g', a', b', r :: Event
-b_ = Note 1 $ B Nat 3
-c = Note 1 $ C Nat 4
-d = Note 1 $ D Nat 4
-e = Note 1 $ E Nat 4
-f = Note 1 $ F Nat 4
-g = Note 1 $ G Nat 4
-a = Note 1 $ A Nat 4
-b = Note 1 $ B Nat 4
-c' = Note 1 $ C Nat 5
-d' = Note 1 $ D Nat 5
-e' = Note 1 $ E Nat 5
-f' = Note 1 $ F Nat 5
-g' = Note 1 $ G Nat 5
-a' = Note 1 $ A Nat 5
-b' = Note 1 $ B Nat 5
-r = Rest 1
-
---main = createMidi "test.midi" $ music [ [c, d], [e, f], [g, a] ]
-
-main = createMidi "test.midi" $ music [ [c, d, g, a, c', b, a, g, f, d, b_, c] ]
-
-
-
-music ess = Music $ map makePart ess
-  where
-    makePart es = Part "p" es
 
 type Pitch = Int
 type MidiEvent = (Ticks, Message)
