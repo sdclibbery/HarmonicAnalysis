@@ -3,8 +3,6 @@ import qualified MelodyTests
 import qualified HarmonyTests
 
 {- TODO:
-x Set up a 'prelude' with lots of notes and duration modifiers in
- x Use for all tests as well as experiments
 * Set up midi export and play
  * Duration
  * Rests

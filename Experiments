@@ -1,5 +1,6 @@
 import Codec.Midi
 import Data.List
+import Data.Ratio
 import Structure
 import Note
 import Compose
@@ -27,19 +28,25 @@ makeTrack (Part p es) = [
    (1000,TrackEnd)
   ]
 
+ticksPerBeat :: Int
+ticksPerBeat = 480
+
+beatsPerBar :: Int
+beatsPerBar = 4
+
 playEvent :: Event -> (Track Ticks)
 --playEvent (Rest d) = 
-playEvent (Note d n) = playnote $ absChromatic n
+playEvent (Note d n) = playnote (absChromatic n) d
 
-playnote :: Pitch -> Track Ticks
-playnote k = [ keydown k, keyup k]
+playnote :: Pitch -> Structure.Time -> Track Ticks
+playnote k d = [keydown k, keyup k]
   where
     keydown k = (0, NoteOn {channel = 0, key = k, velocity = 120})
-    keyup k = (480, NoteOn {channel = 0, key = k, velocity = 0})
+    keyup k = (truncate $ (fromIntegral $ ticksPerBeat * beatsPerBar) * (fromRational d), NoteOn {channel = 0, key = k, velocity = 0})
 
 createMidi :: FilePath -> Music -> IO()
 createMidi f (Music ps) = exportFile f $ Midi {
          fileType = MultiTrack, 
-         timeDiv = TicksPerBeat 480, 
+         timeDiv = TicksPerBeat ticksPerBeat, 
          tracks = map makeTrack ps
        }
