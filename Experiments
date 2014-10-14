@@ -20,13 +20,13 @@ instance Random Weapon where
 
 
 instance Random Note where
-  random g = randomR (C Fl 0, B Sh 7) g
-  randomR (lo, hi) g = (C Nat r, g')
+  random g = randomR (Note C Fl 0, Note B Sh 7) g
+  randomR (lo, hi) g = (Note C Nat r, g')
     where
       (r, g') = randomR (3,5) g
 
 instance Random Event where
-  random g = (Note (1%4) $ n, g')
+  random g = (Play (1%4) $ n, g')
     where
       (n, g') = random g
   randomR (a,b) g = random g -- Ignoring lo/hi :-/
@@ -75,7 +75,7 @@ toTicks t = truncate $ (fromIntegral $ ticksPerBeat * beatsPerBar) * (fromRation
 
 playEvent :: Event -> (Track Ticks)
 playEvent (Rest d) = [(toTicks d, NoteOff {channel = 0, key = 0, velocity = 0})] -- Bit hacky but it works; a resxt really delay the start of the following note
-playEvent (Note d n) = playnote (absChromatic n) d
+playEvent (Play d n) = playnote (absChromatic n) d
 
 playnote :: Pitch -> Structure.Time -> Track Ticks
 playnote k d = [keydown k, keyup k]

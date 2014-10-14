@@ -44,12 +44,12 @@ annotated (Part p es) = snd $ foldl ann (0, []) es
   where
     ann (t, as) e = (t + dur e, as ++ [ANote t (t + dur e) p e])
     dur (Rest d) = d
-    dur (Note d _) = d
+    dur (Play d _) = d
 
 getBasicInfo :: Z.Zipper ANote -> Z.Zipper ANote -> (Interval, Interval, [PartName], Time, Time)
 getBasicInfo z z' = (interval (note l) (note l'), interval (note r) (note r'), [part l, part l'], s, e)
   where
-    note (ANote _ _ _ (Note _ n)) = n
+    note (ANote _ _ _ (Play _ n)) = n
     (_, l, r, _) = getContext z
     (_, l', r', _) = getContext z'
     s = max (start l) (start l')

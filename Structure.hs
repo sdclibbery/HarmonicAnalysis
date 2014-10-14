@@ -21,7 +21,7 @@ type Time = Rational
 type PartName = String
 
 -- |One note or rest in a part
-data Event = Rest Time | Note Time Note deriving (Eq, Show)
+data Event = Rest Time | Play Time Note deriving (Eq, Show)
 
 -- |List of notes and rests in sequence
 data Part = Part { name :: PartName, events :: [Event] } deriving (Eq, Show)

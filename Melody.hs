@@ -66,7 +66,7 @@ outside a1 a2 a = n <= min n1 n2 || n >= max n1 n2
     [n1, n2, n] = fmap (note . event) [a1, a2, a]
 
 note :: Event -> Note
-note (Note _ n) = n
+note (Play _ n) = n
 
 
 data ANote = ANote { start :: Time, end :: Time, part :: PartName, event :: Event }
@@ -76,12 +76,12 @@ annotated (Part p es) = snd $ foldl ann (0, []) es
   where
     ann (t, as) e = (t + dur e, as ++ [ANote t (t + dur e) p e])
     dur (Rest d) = d
-    dur (Note d _) = d
+    dur (Play d _) = d
 
 getBasicInfo :: Z.Zipper ANote -> (Interval, PartName, Time, Time)
 getBasicInfo z = (interval (note l) (note r), part l, start l, end r)
   where
-    note (ANote _ _ _ (Note _ n)) = n
+    note (ANote _ _ _ (Play _ n)) = n
     (_, l, r, _) = getContext z
 
 getContext :: Z.Zipper a -> (Maybe a, a, a, Maybe a)
