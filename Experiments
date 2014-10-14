@@ -5,9 +5,9 @@ import Structure
 import Note
 import Compose
 
---main = createMidi "test.midi" $ music [ [c, d].>>2, [e, f].>>2, [g, a].>>2 ]
+main = createMidi "test.midi" $ music [ [c, d].>>2, [e, f].>>2, [g, a].>>2 ]
 
-main = createMidi "test.midi" $ music [ [c, d, g, a, c'.>2, b, a, g, f, d, b_, c.>4] ]
+--main = createMidi "test.midi" $ music [ [c, d, g, a, c', r, b, a, g, f, d, b_, c.>4] ]
 
 
 type Pitch = Int
@@ -34,15 +34,18 @@ ticksPerBeat = 480
 beatsPerBar :: Int
 beatsPerBar = 4
 
+toTicks :: Structure.Time -> Ticks
+toTicks t = truncate $ (fromIntegral $ ticksPerBeat * beatsPerBar) * (fromRational t)
+
 playEvent :: Event -> (Track Ticks)
---playEvent (Rest d) = 
+playEvent (Rest d) = [(toTicks d, NoteOff {channel = 0, key = 0, velocity = 0})] -- Bit hacky but it works; a resxt really delay the start of the following note
 playEvent (Note d n) = playnote (absChromatic n) d
 
 playnote :: Pitch -> Structure.Time -> Track Ticks
 playnote k d = [keydown k, keyup k]
   where
     keydown k = (0, NoteOn {channel = 0, key = k, velocity = 120})
-    keyup k = (truncate $ (fromIntegral $ ticksPerBeat * beatsPerBar) * (fromRational d), NoteOn {channel = 0, key = k, velocity = 0})
+    keyup k = (toTicks d, NoteOn {channel = 0, key = k, velocity = 0})
 
 createMidi :: FilePath -> Music -> IO()
 createMidi f (Music ps) = exportFile f $ Midi {
