@@ -4,8 +4,44 @@ import Data.Ratio
 import Structure
 import Note
 import Compose
+import System.Random
 
-main = createMidi "test.midi" $ music [ [c, d].>>2, [e, f].>>2, [g, a].>>2 ]
+
+{-
+rollDice :: IO Int
+  rollDice = getStdRandom (randomR (1,6))
+
+instance Random Weapon where
+  random g = case randomR (0, 2) g of
+               (r, g') -> (toEnum r, g')
+  randomR (a,b) g = case randomR (fromEnum a, fromEnum b) g of
+                      (r, g') -> (toEnum r, g')
+-}
+
+
+instance Random Note where
+  random g = randomR (C Fl 0, B Sh 7) g
+  randomR (lo, hi) g = (C Nat r, g')
+    where
+      (r, g') = randomR (3,5) g
+
+instance Random Event where
+  random g = (Note (1%4) $ n, g')
+    where
+      (n, g') = random g
+  randomR (a,b) g = random g -- Ignoring lo/hi :-/
+
+randomEvents :: Int -> StdGen -> [Event]
+randomEvents n = take n . unfoldr (Just . random)
+
+
+
+main = do
+    seed  <- newStdGen
+    let es = randomEvents 10 seed
+    createMidi "test.midi" $ music [ es ]
+
+--main = createMidi "test.midi" $ music [ [c, d].>>2, [e, f].>>2, [g, a].>>2 ]
 
 --main = createMidi "test.midi" $ music [ [c, d, g, a, c', r, b, a, g, f, d, b_, c.>4] ]
 
