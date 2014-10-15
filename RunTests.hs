@@ -3,8 +3,8 @@ import qualified MelodyTests
 import qualified HarmonyTests
 
 {- TODO:
-* Split Midi export into own file
 * Set up a random composer
+ * Split into own module
  * Durations should be inverse powers of two, or dotted versions only
  * Can include rests
  * Able to compose multiple until a given duration
