@@ -9,7 +9,7 @@ import System.Random
 
 main = do
     seed  <- newStdGen
-    let es = randomEvents 10 seed
+    let es = randomRMelody 10 seed
     let m = music [ es ]
     putStrLn $ show m
     createMidi "test.midi" m
@@ -36,7 +36,12 @@ randomRDuration (lo, hi) g = (1 % (pow2 n), g)
     (n, g') = randomR (denominator lo, denominator hi) g
     pow2 n = 2 ^ (round $ logBase 2 $ fromIntegral n)
 
-randomEvents :: Int -> StdGen -> [Event]
-randomEvents n = take n . unfoldr (Just . random)
+randomRMelody :: Time -> StdGen -> [Event]
+randomRMelody n g = fst $ until (\(es,_) -> length es >= n) composeNote ([], g)
+  where
+    length es = foldr (\e l -> duration e + l) 0 es
+    duration (Rest d) = d
+    duration (Play d _) = d
+    composeNote (es,g) = let (e, g') = random g in (es ++ [e], g')
 
 
