@@ -12,7 +12,7 @@ main = do
     let es = randomEvents 10 seed
     let m = music [ es ]
     putStrLn $ show m
---    createMidi "test.midi" m
+    createMidi "test.midi" m
 
 
 instance Random Note where
@@ -24,7 +24,7 @@ instance Random Note where
       (o, g''') = randomR (olo, ohi) g''
 
 instance Random Event where
-  random g = randomR (Play (1%16) $ Note C Fl 0, Play 1 $ Note B Sh 7) g
+  random g = randomR (Play (1%8) $ Note C Fl 0, Play (1%2) $ Note B Sh 7) g
   randomR (Play dlo nlo, Play dhi nhi) g = (Play d n, g'')
     where
       (d, g') = randomRDuration (dlo, dhi) g
