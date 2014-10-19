@@ -8,9 +8,12 @@ import System.Random
 
 
 main = do
-    seed  <- newStdGen
-    let es = randomRMelody 10 seed
-    let m = music [ es ]
+    g <- newStdGen
+    let (es1, g') = randomRMelody (Note E Nat 2, Note E Nat 4) 10 g
+    let (es2, g'') = randomRMelody (Note C Nat 3, Note C Nat 5) 10 g'
+    let (es3, g''') = randomRMelody (Note G Nat 3, Note F Nat 5) 10 g''
+    let (es4, g'''') = randomRMelody (Note C Nat 4, Note C Nat 6) 10 g'''
+    let m = music [ es1, es2, es3, es4 ]
     putStrLn $ show m
     createMidi "test.midi" m
 
@@ -36,12 +39,10 @@ randomRDuration (lo, hi) g = (1 % (pow2 n), g)
     (n, g') = randomR (denominator lo, denominator hi) g
     pow2 n = 2 ^ (round $ logBase 2 $ fromIntegral n)
 
-randomRMelody :: Time -> StdGen -> [Event]
-randomRMelody n g = fst $ until (\(es,_) -> length es >= n) composeNote ([], g)
+randomRMelody :: RandomGen g => (Note, Note) -> Time -> g -> ([Event], g)
+randomRMelody (lo, hi) l g = until (\(es,_) -> length es >= l) composeNote ([], g)
   where
     length es = foldr (\e l -> duration e + l) 0 es
     duration (Rest d) = d
     duration (Play d _) = d
-    composeNote (es,g) = let (e, g') = random g in (es ++ [e], g')
-
-
+    composeNote (es,g) = let (e, g') = randomR (Play (1%8) lo, Play (1%2) hi) g in (es ++ [e], g')

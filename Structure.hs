@@ -8,7 +8,7 @@ module Structure (
   PartName,
   Event(..),
   Part(..),
-  Music(..),
+  Music(..)
 ) where
 import Note
 import Data.List

@@ -6,8 +6,8 @@ import qualified HarmonyTests
 * Set up a random composer
  x Durations should be inverse powers of two
  x Able to compose until a given duration
- * Can compose multiple parts
-  * Each part has an appropriate pitch range
+ x Can compose multiple parts
+  x Each part has an appropriate pitch range
 * Modularise random composer
 * Need to compose step by step
  * Pick shortest part to get next note
