@@ -4,12 +4,13 @@ import qualified HarmonyTests
 
 {- TODO:
 * Set up a random composer
- * Split into own module
- * Durations should be inverse powers of two, or dotted versions only
+ x Durations should be inverse powers of two
  * Can include rests
- * Able to compose multiple until a given duration
+ * Able to compose until a given duration
+ * can compose multiple parts
   * Each part has an appropriate pitch range
 * Set up a random but filtered composer
+* Granular composer: give it a grain of melody and it composes with it
 * Continue with more rules
 -}
 

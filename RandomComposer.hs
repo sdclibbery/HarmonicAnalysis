@@ -25,10 +25,16 @@ instance Random Note where
 
 instance Random Event where
   random g = randomR (Play (1%16) $ Note C Fl 0, Play 1 $ Note B Sh 7) g
-  randomR (Play dlo nlo, Play dhi nhi) g = (Play (1%d) n, g'')
+  randomR (Play dlo nlo, Play dhi nhi) g = (Play d n, g'')
     where
-      (d, g') = randomR (denominator dlo, denominator dhi) g
+      (d, g') = randomRDuration (dlo, dhi) g
       (n, g'') = randomR (nlo, nhi) g'
+
+randomRDuration :: RandomGen g => (Time, Time) -> g -> (Time, g)
+randomRDuration (lo, hi) g = (1 % (pow2 n), g)
+  where
+    (n, g') = randomR (denominator lo, denominator hi) g
+    pow2 n = 2 ^ (round $ logBase 2 $ fromIntegral n)
 
 randomEvents :: Int -> StdGen -> [Event]
 randomEvents n = take n . unfoldr (Just . random)
