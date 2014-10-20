@@ -3,17 +3,12 @@ import qualified MelodyTests
 import qualified HarmonyTests
 
 {- TODO:
-* Set up a random composer
- x Durations should be inverse powers of two
- x Able to compose until a given duration
- x Can compose multiple parts
-  x Each part has an appropriate pitch range
-* Modularise random composer
 * Need to compose step by step
  * Pick shortest part to get next note
  * Pick appropriate note
  * Apply filter
 * Can include rests
+* Modularise random composer
 * Set up a random but filtered composer
  * Filter by applying Prout rules
  * Filter durations to hit bar lines..?
