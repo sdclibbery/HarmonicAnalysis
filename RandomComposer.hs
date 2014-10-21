@@ -11,7 +11,7 @@ import System.Random
 main = do
     g <- newStdGen
     let l = 10
-    let (m,_) = until ((>= l).musicLength.fst) addEvent (Music [Part "bass" [], Part "tenor" [], Part "alto" [], Part "treble" []], g)
+    let (m,_) = until ((>= l).musicLength.fst) addEvent (Music [{- Part "bass" [], Part "tenor" [], Part "alto" [], -} Part "treble" []], g)
     putStrLn $ show m
     createMidi "test.midi" m
 
