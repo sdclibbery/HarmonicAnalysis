@@ -3,8 +3,6 @@ import qualified MelodyTests
 import qualified HarmonyTests
 
 {- TODO:
-! Broken: only chooses lowest or highest note!!
- - Test with single part
 * Modularise random composer
 * Support filtering while composing
  * Filter by applying Prout rules
