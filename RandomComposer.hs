@@ -6,6 +6,8 @@ import Compose
 import Midi
 import Data.Ord
 import System.Random
+import qualified Harmony as H
+import qualified Melody as M
 
 
 main = do
@@ -17,7 +19,19 @@ main = do
   createMidi "test.midi" m
 
 addEvent :: RandomGen g => (Music, g) -> (Music, g)
-addEvent (Music ps, g) = (Music ps', g'')
+addEvent (m, g) = tryUntil noWarnings addRandomEvent (m, g)
+  where
+    noWarnings x = noMelodyWarnings x && noHarmonyWarnings x
+    noMelodyWarnings = (== 0).length.(M.analyse).fst
+    noHarmonyWarnings = (== 0).length.(H.analyse).fst
+
+tryUntil :: RandomGen g => ((a, g) -> Bool) -> ((a, g) -> (a, g)) -> (a, g) -> (a, g)
+tryUntil p f (x, g) = if p (x', g') then (x', g') else tryUntil p f (x, g')
+  where
+    (x', g') = f (x, g)
+
+addRandomEvent :: RandomGen g => (Music, g) -> (Music, g)
+addRandomEvent (Music ps, g) = (Music ps', g'')
   where
     (i, sp) = findShortestPart ps
     ps' = replace i sp' ps

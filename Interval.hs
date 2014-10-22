@@ -64,7 +64,7 @@ quality (Interval 6 10 0) = Minor
 quality (Interval 6 11 0) = Major
 quality (Interval 6 12 0) = Augmented
 quality (Interval d c o) | d < 0 = quality (Interval (-d) (-c) (-o))
-quality (Interval d c o) | o > 0 = quality (Interval d c (o-1))
+quality (Interval d c o) | o > 0 = quality (Interval (d-7) (c-12) (o-1))
 
 -- |Check if an interval is dissonant
 dissonant :: Interval -> Bool
