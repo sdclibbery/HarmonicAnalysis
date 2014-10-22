@@ -9,11 +9,12 @@ import System.Random
 
 
 main = do
-    g <- newStdGen
-    let l = 20
-    let (m,_) = until ((>= l).musicLength.fst) addEvent (Music [Part "bass" [], Part "tenor" [], Part "alto" [], Part "treble" []], g)
-    putStrLn $ show m
-    createMidi "test.midi" m
+  g <- newStdGen
+  let l = 20
+  let parts = [Part "bass" [], Part "tenor" [], Part "alto" [], Part "treble" []]
+  let (m,_) = until ((>= l).musicLength.fst) addEvent (Music parts, g)
+  putStrLn $ show m
+  createMidi "test.midi" m
 
 addEvent :: RandomGen g => (Music, g) -> (Music, g)
 addEvent (Music ps, g) = (Music ps', g'')

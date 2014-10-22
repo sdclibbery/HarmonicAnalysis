@@ -3,13 +3,11 @@ import qualified MelodyTests
 import qualified HarmonyTests
 
 {- TODO:
-* Modularise random composer
-* Support filtering while composing
- * Filter by applying Prout rules
- * Filter durations to hit bar lines..?
-* Can include rests?
-* Granular composer: give it a grain of melody and it composes with it
+* Filter random composition by applying Prout rules
 * Continue with more rules
+ * Haven't actually implemeted 96 properly yet!!
+* Look at auxiliary note identification
+* Granular composer: give it a grain of melody and it composes with it
 -}
 
 main = runTestTT $ TestList
