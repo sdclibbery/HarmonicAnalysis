@@ -29,5 +29,6 @@ testRuleH96 = TestLabel "ruleH96" $ TestList
     , test []                                                                      $ music' [ [c, c], [c, c] ]
     , test []                                                                      $ music' [ [c, c], [c', c'] ]
     , test []                                                                      $ music' [ [c, c], [c, c'] ]
+    , test []                                                                      $ music' [ [c, c], [c, d], [d, c] ]
     ] where
         test e m = show m ~: e ~=? analyse m
