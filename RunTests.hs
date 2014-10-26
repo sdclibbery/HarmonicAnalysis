@@ -4,8 +4,13 @@ import qualified HarmonyTests
 
 {- TODO:
 * Continue with more rules
- * Haven't actually implemeted 96 properly yetInterval.
-* Look at auxiliary note identification
+ * Rule 91
+ * Rule 92
+ * Rule 99
+ * &c.
+* Define Chord data type
+* Analyse harmony: Music -> [Chord]
+ * Look at auxiliary note identification
 * Granular composer: give it a grain of melody and it composes with it
 -}
 
