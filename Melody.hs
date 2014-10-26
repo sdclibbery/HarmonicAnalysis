@@ -69,15 +69,6 @@ note :: Event -> Note
 note (Play _ n) = n
 
 
-data ANote = ANote { start :: Time, end :: Time, part :: PartName, event :: Event }
-
-annotated :: Part -> [ANote]
-annotated (Part p es) = snd $ foldl ann (0, []) es
-  where
-    ann (t, as) e = (t + dur e, as ++ [ANote t (t + dur e) p e])
-    dur (Rest d) = d
-    dur (Play d _) = d
-
 getBasicInfo :: Z.Zipper ANote -> (Interval, PartName, Time, Time)
 getBasicInfo z = (interval (note l) (note r), part l, start l, end r)
   where
@@ -91,6 +82,16 @@ getContext z = (l2, l, r, r2)
     l = Z.cursor z
     r = Z.cursor $ Z.right z
     r2 = Z.safeCursor $ Z.right $ Z.right z
+
+
+data ANote = ANote { start :: Time, end :: Time, part :: PartName, event :: Event }
+
+annotated :: Part -> [ANote]
+annotated (Part p es) = snd $ foldl ann (0, []) es
+  where
+    ann (t, as) e = (t + dur e, as ++ [ANote t (t + dur e) p e])
+    dur (Rest d) = d
+    dur (Play d _) = d
 
 walkZipper :: (Z.Zipper ANote -> b) -> Z.Zipper ANote -> [b]
 walkZipper f z

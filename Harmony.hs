@@ -37,15 +37,6 @@ ruleH96 (z, z')
     (i, i2, ps, s, e) = getBasicInfo z z'
 
 
-data ANote = ANote { start :: Time, end :: Time, part :: PartName, event :: Event }
-
-annotated :: Part -> [ANote]
-annotated (Part p es) = snd $ foldl ann (0, []) es
-  where
-    ann (t, as) e = (t + dur e, as ++ [ANote t (t + dur e) p e])
-    dur (Rest d) = d
-    dur (Play d _) = d
-
 getBasicInfo :: Z.Zipper ANote -> Z.Zipper ANote -> (Interval, Interval, [PartName], Time, Time)
 getBasicInfo z z' = (interval (note l) (note l'), interval (note r) (note r'), [part l, part l'], s, e)
   where
@@ -62,6 +53,16 @@ getContext z = (l2, l, r, r2)
         l = Z.cursor z
         r = Z.cursor $ Z.right z
         r2 = Z.safeCursor $ Z.right $ Z.right z
+
+
+data ANote = ANote { start :: Time, end :: Time, part :: PartName, event :: Event }
+
+annotated :: Part -> [ANote]
+annotated (Part p es) = snd $ foldl ann (0, []) es
+  where
+    ann (t, as) e = (t + dur e, as ++ [ANote t (t + dur e) p e])
+    dur (Rest d) = d
+    dur (Play d _) = d
 
 walkZippers :: ((Z.Zipper ANote, Z.Zipper ANote) -> b) -> (Z.Zipper ANote, Z.Zipper ANote) -> [b]
 walkZippers f (z, z')
