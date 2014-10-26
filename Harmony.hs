@@ -37,7 +37,8 @@ ruleH96 (z, z')
   where
     (i, i2, ps, s, e) = getBasicInfo z z'
     (_, l, r, _) = getContext z
-    same = note l == note r
+    (_, l', r', _) = getContext z'
+    same = note l == note r && note l' == note r'
 
 
 note :: ANote -> Note
