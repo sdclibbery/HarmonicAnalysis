@@ -10,7 +10,7 @@ The analytic rules are according to Ebeneezer Prouts books 'Harmony' and 'Counte
 module Harmony (
   analyse
 ) where
-import Note
+import Note hiding (octave)
 import Interval
 import Structure
 import qualified Report as R
@@ -32,6 +32,7 @@ analyse (Music ps) = catMaybes $ concat $ applyRules $ pairsOfPartZippers ps
 ruleH96 :: (Z.Zipper ANote, Z.Zipper ANote) -> Maybe R.Report
 ruleH96 (z, z')
   | unison i && unison i2 = Just $ R.Error (R.Harmony 96) (R.Source ps s e) $ "Consecutive unisons"
+  | octave i && octave i2 = Just $ R.Error (R.Harmony 96) (R.Source ps s e) $ "Consecutive octaves"
   | otherwise             = Nothing
   where
     (i, i2, ps, s, e) = getBasicInfo z z'

@@ -17,7 +17,8 @@ module Interval (
   augmented,
   unison,
   second,
-  step
+  step,
+  Interval.octave
 ) where
 import Note
 
@@ -26,7 +27,7 @@ data Interval = Interval {dia :: Int, chr :: Int, oct :: Int} deriving (Eq)
 
 -- |Create an interval from two notes
 interval :: Note -> Note -> Interval
-interval n n' = Interval (absDiatonic n' - absDiatonic n) (absChromatic n' - absChromatic n) (octave n' - octave n)
+interval n n' = Interval (absDiatonic n' - absDiatonic n) (absChromatic n' - absChromatic n) (Note.octave n' - Note.octave n)
 
 instance Show Interval where
   show i = sign ++ (show $ quality i) ++ (show $ abs(dia i) + 1)
@@ -100,3 +101,7 @@ second i = abs(dia i) == 1
 -- |Check if an interval is a step
 step :: Interval -> Bool
 step i = abs(dia i) == 1
+
+-- |Check if an interval is a octave
+octave :: Interval -> Bool
+octave i = abs(dia i) == 7
