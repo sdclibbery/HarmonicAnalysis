@@ -31,17 +31,21 @@ analyse (Music ps) = catMaybes $ concat $ applyRules $ pairsOfPartZippers ps
 -- Consecutive unisons are bad
 ruleH96 :: (Z.Zipper ANote, Z.Zipper ANote) -> Maybe R.Report
 ruleH96 (z, z')
-  | unison i && unison i2 = Just $ R.Error (R.Harmony 96) (R.Source ps s e) $ "Consecutive unisons"
-  | octave i && octave i2 = Just $ R.Error (R.Harmony 96) (R.Source ps s e) $ "Consecutive octaves"
+  | unison i && unison i2 && not same = Just $ R.Error (R.Harmony 96) (R.Source ps s e) $ "Consecutive unisons"
+  | octave i && octave i2 && not same = Just $ R.Error (R.Harmony 96) (R.Source ps s e) $ "Consecutive octaves"
   | otherwise             = Nothing
   where
     (i, i2, ps, s, e) = getBasicInfo z z'
+    (_, l, r, _) = getContext z
+    same = note l == note r
 
+
+note :: ANote -> Note
+note (ANote _ _ _ (Play _ n)) = n
 
 getBasicInfo :: Z.Zipper ANote -> Z.Zipper ANote -> (Interval, Interval, [PartName], Time, Time)
 getBasicInfo z z' = (interval (note l) (note l'), interval (note r) (note r'), [part l, part l'], s, e)
   where
-    note (ANote _ _ _ (Play _ n)) = n
     (_, l, r, _) = getContext z
     (_, l', r', _) = getContext z'
     s = max (start l) (start l')
