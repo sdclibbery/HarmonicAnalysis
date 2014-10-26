@@ -28,6 +28,6 @@ testRuleH96 = TestLabel "ruleH96" $ TestList
     , test [Error (Harmony 96) (Source ["p", "p2"] 0 2) "Consecutive octaves"]     $ music' [ [c, d], [c', d'] ]
     , test []                                                                      $ music' [ [c, c], [c, c] ]
     , test []                                                                      $ music' [ [c, c], [c', c'] ]
---    , test []                                                                      $ music' [ [c, c], [c, c'] ]
+    , test []                                                                      $ music' [ [c, c], [c, c'] ]
     ] where
         test e m = show m ~: e ~=? analyse m
