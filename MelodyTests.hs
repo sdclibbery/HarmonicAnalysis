@@ -11,6 +11,7 @@ import Compose
 tests = TestLabel "Melody" $ TestList
   [ testRuleH89
   , testRuleH90
+  , testRuleH91
   ]
 
 music' = music . map (.>> 4)
@@ -38,3 +39,10 @@ testRuleH90 = TestLabel "ruleH90" $ TestList
     , test [Error (Harmony 90) (Source ["p"] 0 2) "Outside Diminished5"]          $ music' [ [b, f', g'] ]
     ] where
         test e s = show s ~: e ~=? analyse s
+
+testRuleH91 = TestLabel "ruleH91" $ TestList
+  [ test [Error (Harmony 91) (Source ["p"] 0 2) "Augmented4"]                $ music' [ [f, b] ]
+  , test []                                                                    $ music' [ [gf, a] ]
+  ] where
+    test e s = show s ~: e ~=? analyse s
+

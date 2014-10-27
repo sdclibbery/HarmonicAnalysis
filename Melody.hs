@@ -25,7 +25,7 @@ analyse (Music ps) = catMaybes $ concat $ applyRules $ partZippers ps
   where
     partZippers = map (Z.fromList . annotated)
     applyRules zs = walkZipper <$> rules <*> zs
-    rules = [ruleH89, ruleH90]
+    rules = [ruleH89, ruleH90, ruleH91]
 
 
 -- Analysis of Music according to Section 89 in Prouts Harmony
@@ -58,6 +58,16 @@ ruleH90 z
         where
           [n1, n2, n] = fmap (note . event) [a1, a2, a]
           i = interval n2 n
+
+-- Analysis of Music according to Section 91 in Prouts Harmony
+-- An augmented interval must be resolved correctly
+ruleH91 :: Z.Zipper ANote -> Maybe R.Report
+ruleH91 z
+  | second i    = Nothing
+  | augmented i = Just $ R.Error (R.Harmony 91) (R.Source [part] s e) $ show i
+  | otherwise   = Nothing
+    where
+      (i, part, s, e) = getBasicInfo z
 
 
 outside :: ANote -> ANote -> ANote -> Bool
