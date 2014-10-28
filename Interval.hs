@@ -18,7 +18,8 @@ module Interval (
   unison,
   second,
   step,
-  Interval.octave
+  Interval.octave,
+  large
 ) where
 import Note
 
@@ -105,3 +106,7 @@ step i = abs(dia i) == 1
 -- |Check if an interval is a octave
 octave :: Interval -> Bool
 octave i = abs(dia i) == 7
+
+-- |Check if an interval is large (a seventh or more)
+large :: Interval -> Bool
+large i = abs(dia i) > 5

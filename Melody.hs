@@ -25,7 +25,7 @@ analyse (Music ps) = catMaybes $ concat $ applyRules $ partZippers ps
   where
     partZippers = map (Z.fromList . annotated)
     applyRules zs = walkZipper <$> rules <*> zs
-    rules = [ruleH89, ruleH90, ruleH91]
+    rules = [ruleH89, ruleH90, ruleH91, ruleH92]
 
 
 -- Analysis of Music according to Section 89 in Prouts Harmony
@@ -68,6 +68,20 @@ ruleH91 z
   | otherwise   = Nothing
     where
       (i, part, s, e) = getBasicInfo z
+
+-- Analysis of Music according to Section 92 in Prouts Harmony
+-- A large interval must be approached and quitted from inside the interval
+ruleH92 :: Z.Zipper ANote -> Maybe R.Report
+ruleH92 z
+  | not $ large i   = Nothing
+  | isNote l2 && outside l r (fromJust l2) = Just $ R.Error (R.Harmony 92) (R.Source [part] s e) $ "Large Interval Approach"
+  | isNote r2 && outside l r (fromJust r2) = Just $ R.Error (R.Harmony 92) (R.Source [part] s e) $ "Large Interval Leave"
+  | otherwise       = Nothing
+    where
+      (i, part, s, e) = getBasicInfo z
+      (l2, l, r, r2) = getContext z
+      isNote (Just (ANote _ _ _  (Play _ _))) = True
+      isNote _ = False
 
 
 outside :: ANote -> ANote -> ANote -> Bool

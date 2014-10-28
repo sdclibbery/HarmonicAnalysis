@@ -12,6 +12,7 @@ tests = TestLabel "Melody" $ TestList
   [ testRuleH89
   , testRuleH90
   , testRuleH91
+  , testRuleH92
   ]
 
 music' = music . map (.>> 4)
@@ -51,10 +52,10 @@ testRuleH92 = TestLabel "ruleH92" $ TestList
     , test []                                                                   $ music' [ [e, e'] ]
     , test []                                                                   $ music' [ [g, e, e'] ]
     , test []                                                                   $ music' [ [e, e', c'] ]
---    , test [Error (Harmony 92) (Source ["p"] 1 3) "Large Interval Approach"]    $ music' [ [d, e, e'] ]
---    , test [Error (Harmony 92) (Source ["p"] 0 2) "Large Interval Leave"]       $ music' [ [e, e', g'] ]
---    , test [Error (Harmony 92) (Source ["p"] 1 3) "Large Interval Approach"]    $ music' [ [d, e, e', c'] ]
---    , test [Error (Harmony 92) (Source ["p"] 1 3) "Large Interval Leave"]       $ music' [ [g, e, e', g'] ]
+    , test [Error (Harmony 92) (Source ["p"] 1 3) "Large Interval Approach"]    $ music' [ [d, e, e'] ]
+    , test [Error (Harmony 92) (Source ["p"] 0 2) "Large Interval Leave"]       $ music' [ [e, e', g'] ]
+    , test [Error (Harmony 92) (Source ["p"] 1 3) "Large Interval Approach"]    $ music' [ [d, e, e', c'] ]
+    , test [Error (Harmony 92) (Source ["p"] 1 3) "Large Interval Leave"]       $ music' [ [g, e, e', g'] ]
     ] where
         test e s = show s ~: e ~=? analyse s
 
