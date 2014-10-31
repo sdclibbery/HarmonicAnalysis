@@ -10,6 +10,7 @@ import Compose
 
 tests = TestLabel "Harmony" $ TestList
   [ testRuleH96
+  , testRuleH99
   ]
 
 music' = music . map (.>> 4)
@@ -35,3 +36,12 @@ testRuleH96 = TestLabel "ruleH96" $ TestList
 --     , test []                                                                      $ music' [ [c, d, e], [c', d', e'] ]
     ] where
         test e m = show m ~: e ~=? analyse m
+
+testRuleH99 = TestLabel "ruleH99" $ TestList
+    [ test [Error (Harmony 99) (Source ["p", "p2"] 1 3) "Consecutive fifths"]     $ music' [ [g, c, d], [e, g, a] ]
+    , test []                                                                     $ music' [ [g, c, c], [e, g, g] ]
+    ] where
+        test e m = show m ~: e ~=? analyse m
+
+-- Rule 99: Consecutive fifths are errors, except they're warnings when taken by contrary motion, if one of the parts is a middle part, or are taken from a dominant harmony to a tonic
+    

@@ -18,6 +18,7 @@ module Interval (
   unison,
   second,
   step,
+  fifth,
   Interval.octave,
   large
 ) where
@@ -106,6 +107,10 @@ step i = abs(dia i) == 1
 -- |Check if an interval is a octave
 octave :: Interval -> Bool
 octave i = abs(dia i) == 7
+
+-- |Check if an interval is a fifth
+fifth :: Interval -> Bool
+fifth i = abs(dia i) == 4
 
 -- |Check if an interval is large (a seventh or more)
 large :: Interval -> Bool

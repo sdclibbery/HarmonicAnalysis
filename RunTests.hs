@@ -4,7 +4,6 @@ import qualified HarmonyTests
 
 {- TODO:
 * Continue with more rules
- * Rule 92
  * Rule 99
  * &c.
 * Define Chord data type

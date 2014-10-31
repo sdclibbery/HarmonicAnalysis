@@ -25,7 +25,7 @@ analyse (Music ps) = catMaybes $ concat $ applyRules $ pairsOfPartZippers ps
   where
     pairsOfPartZippers = allPairs . map (Z.fromList . annotated)
     applyRules zps = walkZippers <$> rules <*> zps
-    rules = [ruleH96]
+    rules = [ruleH96, ruleH99]
 
 -- Analysis of Music according to Section 96 in Prouts Harmony
 -- Consecutive unisons are bad
@@ -33,7 +33,19 @@ ruleH96 :: (Z.Zipper ANote, Z.Zipper ANote) -> Maybe R.Report
 ruleH96 (z, z')
   | unison i && unison i2 && not same = Just $ R.Error (R.Harmony 96) (R.Source ps s e) $ "Consecutive unisons"
   | octave i && octave i2 && not same = Just $ R.Error (R.Harmony 96) (R.Source ps s e) $ "Consecutive octaves"
-  | otherwise             = Nothing
+  | otherwise                         = Nothing
+  where
+    (i, i2, ps, s, e) = getBasicInfo z z'
+    (_, l, r, _) = getContext z
+    (_, l', r', _) = getContext z'
+    same = note l == note r && note l' == note r'
+
+-- Analysis of Music according to Section 99 in Prouts Harmony
+-- Consecutive fifths are bad
+ruleH99 :: (Z.Zipper ANote, Z.Zipper ANote) -> Maybe R.Report
+ruleH99 (z, z')
+  | fifth i && fifth i2 && not same = Just $ R.Error (R.Harmony 99) (R.Source ps s e) $ "Consecutive fifths"
+  | otherwise                         = Nothing
   where
     (i, i2, ps, s, e) = getBasicInfo z z'
     (_, l, r, _) = getContext z
