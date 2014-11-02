@@ -40,8 +40,12 @@ testRuleH96 = TestLabel "ruleH96" $ TestList
 testRuleH99 = TestLabel "ruleH99" $ TestList
     [ test [Error (Harmony 99) (Source ["p", "p2"] 1 3) "Consecutive fifths"]     $ music' [ [g, c, d], [e, g, a] ]
     , test []                                                                     $ music' [ [g, c, c], [e, g, g] ]
+    , test [Error (Harmony 99) (Source ["p", "p2"] 1 3) "Consecutive fifths"]     $ music' [ [c_, d_], [g, a] ]
+--    , test [Warning (Harmony 99) (Source ["p", "p2"] 1 3) "Consecutive fifths"]   $ music' [ [g__, c_], [d, g_] ]
     ] where
         test e m = show m ~: e ~=? analyse m
 
--- Rule 99: Consecutive fifths are errors, except they're warnings when taken by contrary motion, if one of the parts is a middle part, or are taken from a dominant harmony to a tonic
-    
+-- Rule 99: Consecutive fifths are errors
+--   except they're warnings when taken by contrary motion, if one of the parts is a middle part, or are taken from a dominant harmony to a tonic
+-- Rule 101: If a perfect fifth is followed by a diminished fifth, thats OK
+--   Diminished fifth followed by perfect is OK IFF niether part is the bass and the lower part rises a semitone
