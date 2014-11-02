@@ -45,10 +45,12 @@ ruleH96 (z, z')
 -- Consecutive fifths are bad
 ruleH99 :: (Z.Zipper ANote, Z.Zipper ANote) -> Maybe R.Report
 ruleH99 (z, z')
-  | consecutive && any middle ps  = Just $ R.Warning (R.Harmony 99) (R.Source ps s e) $ "Consecutive fifths"
-  | consecutive && contrary       = Just $ R.Warning (R.Harmony 99) (R.Source ps s e) $ "Consecutive fifths"
-  | consecutive                   = Just $ R.Error (R.Harmony 99) (R.Source ps s e) $ "Consecutive fifths"
-  | otherwise                     = Nothing
+  | not consecutive             = Nothing
+  | perfect i && diminished i2  = Nothing
+  | any middle ps               = Just $ R.Warning (R.Harmony 99) (R.Source ps s e) $ "Consecutive fifths"
+  | any middle ps               = Just $ R.Warning (R.Harmony 99) (R.Source ps s e) $ "Consecutive fifths"
+  | contrary                    = Just $ R.Warning (R.Harmony 99) (R.Source ps s e) $ "Consecutive fifths"
+  | otherwise                   = Just $ R.Error (R.Harmony 99) (R.Source ps s e) $ "Consecutive fifths"
   where
     (i, i2, ps, s, e) = getBasicInfo z z'
     (_, l, r, _) = getContext z

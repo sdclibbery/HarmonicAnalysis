@@ -15,6 +15,8 @@ module Interval (
   diminished,
   minor,
   augmented,
+  perfect,
+
   unison,
   second,
   step,
@@ -91,6 +93,10 @@ minor i = quality i == Minor
 -- |Check if an interval is augmented
 augmented :: Interval -> Bool
 augmented i = quality i == Augmented
+
+-- |Check if an interval is perfect
+perfect :: Interval -> Bool
+perfect i = quality i == Perfect
 
 -- |Check if an interval is a unison
 unison :: Interval -> Bool
