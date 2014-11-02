@@ -13,6 +13,7 @@ module Melody (
 import Note
 import Interval
 import Structure
+import AnnotatedNote
 import qualified Report as R
 import Data.Maybe
 import qualified Data.List.Zipper as Z
@@ -56,7 +57,7 @@ ruleH90 z
         | otherwise = Just $ R.Error (R.Harmony 90) (R.Source [part] s e) $ "Unresolved " ++ show i
       resolved a1 a2 a = second i && minor i -- Resolution to a diminished is a semitone in from the last note
         where
-          [n1, n2, n] = fmap (note . event) [a1, a2, a]
+          [n1, n2, n] = fmap note [a1, a2, a]
           i = interval n2 n
 
 -- Analysis of Music according to Section 91 in Prouts Harmony
@@ -87,10 +88,7 @@ ruleH92 z
 outside :: ANote -> ANote -> ANote -> Bool
 outside a1 a2 a = n <= min n1 n2 || n >= max n1 n2
   where
-    [n1, n2, n] = fmap (note . event) [a1, a2, a]
-
-note :: Event -> Note
-note (Play _ n) = n
+    [n1, n2, n] = fmap note [a1, a2, a]
 
 
 getBasicInfo :: Z.Zipper ANote -> (Interval, PartName, Time, Time)
@@ -107,15 +105,6 @@ getContext z = (l2, l, r, r2)
     r = Z.cursor $ Z.right z
     r2 = Z.safeCursor $ Z.right $ Z.right z
 
-
-data ANote = ANote { start :: Time, end :: Time, part :: PartName, event :: Event }
-
-annotated :: Part -> [ANote]
-annotated (Part p es) = snd $ foldl ann (0, []) es
-  where
-    ann (t, as) e = (t + dur e, as ++ [ANote t (t + dur e) p e])
-    dur (Rest d) = d
-    dur (Play d _) = d
 
 walkZipper :: (Z.Zipper ANote -> b) -> Z.Zipper ANote -> [b]
 walkZipper f z
