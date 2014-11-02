@@ -46,7 +46,5 @@ testRuleH99 = TestLabel "ruleH99" $ TestList
     ] where
         test e m = show m ~: e ~=? analyse m
 
--- Rule 99: Consecutive fifths are errors
---   except they're warnings when taken by contrary motion, if one of the parts is a middle part, or are taken from a dominant harmony to a tonic
 -- Rule 101: If a perfect fifth is followed by a diminished fifth, thats OK
 --   Diminished fifth followed by perfect is OK IFF niether part is the bass and the lower part rises a semitone
