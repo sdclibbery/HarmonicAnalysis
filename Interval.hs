@@ -98,7 +98,7 @@ unison i = abs(dia i) == 0
 
 -- |Check if an interval is a second
 second :: Interval -> Bool
-second i = abs(dia i) == 1
+second i = abs(dia i) `mod` 7 == 1
 
 -- |Check if an interval is a step
 step :: Interval -> Bool
@@ -106,11 +106,11 @@ step i = abs(dia i) == 1
 
 -- |Check if an interval is a octave
 octave :: Interval -> Bool
-octave i = abs(dia i) == 7
+octave i = (abs(dia i) `mod` 7 == 0) && (not $ unison i)
 
 -- |Check if an interval is a fifth
 fifth :: Interval -> Bool
-fifth i = abs(dia i) == 4
+fifth i = abs(dia i) `mod` 7 == 4
 
 -- |Check if an interval is large (a seventh or more)
 large :: Interval -> Bool

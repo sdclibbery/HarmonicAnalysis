@@ -40,8 +40,8 @@ testRuleH96 = TestLabel "ruleH96" $ TestList
 testRuleH99 = TestLabel "ruleH99" $ TestList
     [ test [Error (Harmony 99) (Source ["p", "p2"] 1 3) "Consecutive fifths"]     $ music' [ [g, c, d], [e, g, a] ]
     , test []                                                                     $ music' [ [g, c, c], [e, g, g] ]
-    , test [Error (Harmony 99) (Source ["p", "p2"] 1 3) "Consecutive fifths"]     $ music' [ [c_, d_], [g, a] ]
---    , test [Warning (Harmony 99) (Source ["p", "p2"] 1 3) "Consecutive fifths"]   $ music' [ [g__, c_], [d, g_] ]
+    , test [Error (Harmony 99) (Source ["p", "p2"] 0 2) "Consecutive fifths"]     $ music' [ [c_, d_], [g, a] ]
+    , test [Warning (Harmony 99) (Source ["p", "p2"] 0 2) "Consecutive fifths"]   $ music' [ [g__, c_], [d, g_] ]
     ] where
         test e m = show m ~: e ~=? analyse m
 

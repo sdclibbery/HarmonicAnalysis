@@ -38,19 +38,22 @@ ruleH96 (z, z')
     (i, i2, ps, s, e) = getBasicInfo z z'
     (_, l, r, _) = getContext z
     (_, l', r', _) = getContext z'
-    same = note l == note r && note l' == note r'
+    same = l == r && l' == r'
 
 -- Analysis of Music according to Section 99 in Prouts Harmony
 -- Consecutive fifths are bad
 ruleH99 :: (Z.Zipper ANote, Z.Zipper ANote) -> Maybe R.Report
 ruleH99 (z, z')
-  | fifth i && fifth i2 && not same = Just $ R.Error (R.Harmony 99) (R.Source ps s e) $ "Consecutive fifths"
-  | otherwise                         = Nothing
+  | consecutive && contrary   = Just $ R.Warning (R.Harmony 99) (R.Source ps s e) $ "Consecutive fifths"
+  | consecutive               = Just $ R.Error (R.Harmony 99) (R.Source ps s e) $ "Consecutive fifths"
+  | otherwise                 = Nothing
   where
     (i, i2, ps, s, e) = getBasicInfo z z'
     (_, l, r, _) = getContext z
     (_, l', r', _) = getContext z'
-    same = note l == note r && note l' == note r'
+    same = l == r && l' == r'
+    consecutive = fifth i && fifth i2 && not same
+    contrary = (l > r && l' < r') || (l < r && l' > r')
 
 
 note :: ANote -> Note
@@ -74,6 +77,12 @@ getContext z = (l2, l, r, r2)
 
 
 data ANote = ANote { start :: Time, end :: Time, part :: PartName, event :: Event }
+
+instance Eq ANote where
+  n == n' = (note n) == (note n')
+
+instance Ord ANote where
+  n `compare` n' = (note n) `compare` (note n')
 
 annotated :: Part -> [ANote]
 annotated (Part p es) = snd $ foldl ann (0, []) es
