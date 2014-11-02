@@ -5,7 +5,7 @@ Description : Definition of musical structure for use in harmonic analysis
 
 module Structure (
   Time(..),
-  PartName,
+  PartName(..),
   Event(..),
   Part(..),
   Music(..)
@@ -18,7 +18,7 @@ import Data.Ord
 type Time = Rational
 
 -- |Part name
-type PartName = String
+data PartName = Bass | Tenor | Alto | Treble deriving (Eq, Show)
 
 -- |One note or rest in a part
 data Event = Rest Time | Play Time Note deriving (Eq, Show)

@@ -19,14 +19,14 @@ testRuleH96 = TestLabel "ruleH96" $ TestList
     [ test []                                                                      $ music' [ [g, c, d], [e, d, e] ]
     , test []                                                                      $ music' [ [g, c, d], [e, c, e] ]
     , test []                                                                      $ music' [ [g, c, d], [e, d, d] ]
-    , test [Error (Harmony 96) (Source ["p", "p2"] 1 3) "Consecutive unisons"]     $ music' [ [g, c, d], [e, c, d] ]
+    , test [Error (Harmony 96) (Source [Bass, Treble] 1 3) "Consecutive unisons"]     $ music' [ [g, c, d], [e, c, d] ]
     , test []                                                                      $ music' [ [g, c, d], [e, c, r, d] ]
-    , test [Error (Harmony 96) (Source ["p", "p2"] 2 4) "Consecutive unisons"]     $ music' [ [g, r, c, d, r], [e, r, c, d, r] ]
+    , test [Error (Harmony 96) (Source [Bass, Treble] 2 4) "Consecutive unisons"]     $ music' [ [g, r, c, d, r], [e, r, c, d, r] ]
     , test []                                                                      $ music' [ [g, c, d], [e, b, c, d] ]
-    , test [Error (Harmony 96) (Source ["p", "p2"] 2 4) "Consecutive unisons"]     $ music' [ [g, d, c, d, d], [e, b, c, d, b] ]
+    , test [Error (Harmony 96) (Source [Bass, Treble] 2 4) "Consecutive unisons"]     $ music' [ [g, d, c, d, d], [e, b, c, d, b] ]
     , test []                                                                      $ music' [ [g, c, d], [e, d, e], [e, c, e] ]
-    , test [Error (Harmony 96) (Source ["p", "p3"] 1 3) "Consecutive unisons"]     $ music' [ [g, c, d], [e, d, e], [e, c, d] ]
-    , test [Error (Harmony 96) (Source ["p", "p2"] 1 3) "Consecutive octaves"]     $ music' [ [g, c, d], [e, c', d'] ]
+    , test [Error (Harmony 96) (Source [Bass, Treble] 1 3) "Consecutive unisons"]     $ music' [ [g, c, d], [e, d, e], [e, c, d] ]
+    , test [Error (Harmony 96) (Source [Bass, Treble] 1 3) "Consecutive octaves"]     $ music' [ [g, c, d], [e, c', d'] ]
     , test []                                                                      $ music' [ [g, c, c], [e, c, c] ]
     , test []                                                                      $ music' [ [g, c, c], [e, c', c'] ]
     , test []                                                                      $ music' [ [g, c, c], [e, c, c'] ]
@@ -38,10 +38,11 @@ testRuleH96 = TestLabel "ruleH96" $ TestList
         test e m = show m ~: e ~=? analyse m
 
 testRuleH99 = TestLabel "ruleH99" $ TestList
-    [ test [Error (Harmony 99) (Source ["p", "p2"] 1 3) "Consecutive fifths"]     $ music' [ [g, c, d], [e, g, a] ]
+    [ test [Error (Harmony 99) (Source [Bass, Treble] 1 3) "Consecutive fifths"]     $ music' [ [g, c, d], [e, g, a] ]
     , test []                                                                     $ music' [ [g, c, c], [e, g, g] ]
-    , test [Error (Harmony 99) (Source ["p", "p2"] 0 2) "Consecutive fifths"]     $ music' [ [c_, d_], [g, a] ]
-    , test [Warning (Harmony 99) (Source ["p", "p2"] 0 2) "Consecutive fifths"]   $ music' [ [g__, c_], [d, g_] ]
+    , test [Error (Harmony 99) (Source [Bass, Treble] 0 2) "Consecutive fifths"]     $ music' [ [c_, d_], [g, a] ]
+    , test [Warning (Harmony 99) (Source [Bass, Treble] 0 2) "Consecutive fifths"]   $ music' [ [g__, c_], [d, g_] ]
+    , test [Warning (Harmony 99) (Source [Alto, Treble] 0 2) "Consecutive fifths"]   $ music' [ [e_, e_], [c_, d_], [g, a] ]
     ] where
         test e m = show m ~: e ~=? analyse m
 

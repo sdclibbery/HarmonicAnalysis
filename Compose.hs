@@ -31,9 +31,13 @@ es .<< i = map (.< i) es
 
 -- |Make a music from lists of events. Each list of events is assigned a default part name
 music :: [[Event]] -> Music
-music ess = Music $ map makePart $ zip ["", "2", "3", "4"] ess
+music ess
+  | length ess == 1 = Music $ map makePart $ zip [Bass] ess
+  | length ess == 2 = Music $ map makePart $ zip [Bass, Treble] ess
+  | length ess == 3 = Music $ map makePart $ zip [Bass, Alto, Treble] ess
+  | length ess == 4 = Music $ map makePart $ zip [Bass, Tenor, Alto, Treble] ess
   where
-    makePart (n, es) = Part ("p"++n) es
+    makePart (n, es) = Part n es
 
 
 -- |Shorthand for a one beat (one quarter note) rest
