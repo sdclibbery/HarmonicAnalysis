@@ -12,8 +12,8 @@ import qualified Melody as M
 
 main = do
   g <- newStdGen
-  let l = 20
-  let parts = [Part "bass" [], Part "tenor" [], Part "alto" [], Part "treble" []]
+  let l = 10
+  let parts = [Part Bass [], Part Tenor [], Part Alto [], Part Treble []]
   let (m,_) = until ((>= l).musicLength.fst) addEvent (Music parts, g)
   putStrLn $ show m
   createMidi "test.midi" m
@@ -58,11 +58,11 @@ eventLength :: Event -> Time
 eventLength (Rest d) = d
 eventLength (Play d _) = d
 
-partRange :: String -> (Note, Note)
-partRange "treble" = (Note C Nat 4, Note C Nat 6)
-partRange "alto"   = (Note G Nat 3, Note F Nat 5)
-partRange "tenor"  = (Note C Nat 3, Note C Nat 5)
-partRange "bass"   = (Note E Nat 2, Note E Nat 4)
+partRange :: PartName -> (Note, Note)
+partRange Treble = (Note C Nat 4, Note C Nat 6)
+partRange Alto   = (Note G Nat 3, Note F Nat 5)
+partRange Tenor  = (Note C Nat 3, Note C Nat 5)
+partRange Bass   = (Note E Nat 2, Note E Nat 4)
 
 instance Random Note where
   random g = randomR (Note C Fl 0, Note B Sh 7) g
