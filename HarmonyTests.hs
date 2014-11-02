@@ -43,8 +43,8 @@ testRuleH99 = TestLabel "ruleH99" $ TestList
     , test [Error (Harmony 99) (Source [Bass, Treble] 0 2) "Consecutive fifths"]     $ music' [ [c_, d_], [g, a] ]
     , test [Warning (Harmony 99) (Source [Bass, Treble] 0 2) "Consecutive fifths"]   $ music' [ [g__, c_], [d, g_] ]
     , test [Warning (Harmony 99) (Source [Alto, Treble] 0 2) "Consecutive fifths"]   $ music' [ [e_, e_], [c_, d_], [g, a] ]
-    , test []                                                                        $ music' [ [c, b_], [g, f] ]
+    , test []                                                                        $ music' [ [c_, b__], [g, f] ]
     ] where
         test e m = show m ~: e ~=? analyse m
 
---   Diminished fifth followed by perfect is OK IFF niether part is the bass and the lower part rises a semitone
+--   Diminished fifth followed by perfect is OK IFF neither part is the bass and the lower part rises a semitone
