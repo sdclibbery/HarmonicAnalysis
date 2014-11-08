@@ -5,7 +5,6 @@ import qualified HarmonyTests
 {- TODO:
 * Support for progressive analysis: only analyse starting two bars from the end
 * Continue with more rules
- * Rule 101
  * Rule 102: hidden fifths/octaves
  * &c.
 * Define Chord data type

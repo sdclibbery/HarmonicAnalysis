@@ -4,7 +4,7 @@ Description : Definition and inspection of musical intervals between notes
 -}
 
 module Interval (
-  Interval,
+  Interval(..),
   interval,
 
   Quality(..),

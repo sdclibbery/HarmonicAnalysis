@@ -47,6 +47,9 @@ ruleH99 :: (Z.Zipper ANote, Z.Zipper ANote) -> Maybe R.Report
 ruleH99 (z, z')
   | not consecutive             = Nothing
   | perfect i && diminished i2  = Nothing
+  | diminished i && perfect i2 && any bass ps = Just $ R.Error (R.Harmony 99) (R.Source ps s e) $ "Consecutive fifths"
+  | diminished i && perfect i2 && not risesASemitone = Just $ R.Warning (R.Harmony 99) (R.Source ps s e) $ "Consecutive fifths"
+  | diminished i && perfect i2  = Nothing
   | any middle ps               = Just $ R.Warning (R.Harmony 99) (R.Source ps s e) $ "Consecutive fifths"
   | any middle ps               = Just $ R.Warning (R.Harmony 99) (R.Source ps s e) $ "Consecutive fifths"
   | contrary                    = Just $ R.Warning (R.Harmony 99) (R.Source ps s e) $ "Consecutive fifths"
@@ -59,6 +62,8 @@ ruleH99 (z, z')
     consecutive = fifth i && fifth i2 && not same
     contrary = (l > r && l' < r') || (l < r && l' > r')
     middle p = p /= Bass && p /= Treble
+    bass p = p == Bass
+    risesASemitone = chr (interval (note l) (note r)) == 1
 
 
 getBasicInfo :: Z.Zipper ANote -> Z.Zipper ANote -> (Interval, Interval, [PartName], Time, Time)
