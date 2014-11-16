@@ -72,8 +72,8 @@ chordToParts :: [Event] -> Parts
 chordToParts (ba:te:trs) = (bass, tenor, treble)
   where
     bass = twice [ba.>2]
-    tenor = twice [r.<4, te.>7.<4]
-    treble = twice (r.<2 : twice (trs.<<4))
+    tenor = twice [r, te]
+    treble = twice ((trs.<<4) ++ ([r, r].<<4) ++ (reverse $ trs.<<4))
 
 prelude = music $ map (.>>2) [ bass, tenor, treble ]
   where
