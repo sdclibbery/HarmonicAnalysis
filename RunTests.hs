@@ -15,6 +15,22 @@ import qualified HarmonyTests
 * Chord composer: give it a key and it picks random chords and composes against them
 * Key composer: creates random key sequence and composes to it
 * Granular composer: give it a grain of melody and it composes with it
+
+
+Music through coding
+
+Data
+* Key: PitchClass Quality
+* Harmony: Degree Quality Extension [Alteration] Inversion
+* Part: PitchClass Octave
+
+Actions
+* Validate lower data against higher
+* Infer higher data from lower
+* Incrementally compose, reporting validation failures immediately and expressively
+
+
+
 -}
 
 main = runTestTT $ TestList

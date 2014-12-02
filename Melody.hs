@@ -51,7 +51,7 @@ ruleH90 z
       (i, part, s, e) = getBasicInfo z
       (l2, l, r, r2) = getContext z
       evaluate
-        | isNothing r2 = Just $ R.Warning (R.Harmony 90) (R.Source [part] s e) $ show i
+        | not (isNote r2) = Just $ R.Warning (R.Harmony 90) (R.Source [part] s e) $ show i
         | outside l r (fromJust r2) = Just $ R.Error (R.Harmony 90) (R.Source [part] s e) $ "Outside " ++ show i
         | resolved l r $ fromJust r2 = Nothing
         | otherwise = Just $ R.Error (R.Harmony 90) (R.Source [part] s e) $ "Unresolved " ++ show i
@@ -81,9 +81,10 @@ ruleH92 z
     where
       (i, part, s, e) = getBasicInfo z
       (l2, l, r, r2) = getContext z
-      isNote (Just (ANote _ _ _  (Play _ _))) = True
-      isNote _ = False
 
+isNote :: (Maybe ANote) -> Bool
+isNote (Just (ANote _ _ _  (Play _ _))) = True
+isNote _ = False
 
 outside :: ANote -> ANote -> ANote -> Bool
 outside a1 a2 a = n <= min n1 n2 || n >= max n1 n2
