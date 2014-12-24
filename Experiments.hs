@@ -5,22 +5,82 @@ import Compose
 import Midi
 import Harmony
 import Melody
+import Data.List
+import Data.Ord
+import Data.Ratio
 
 
-data Chord = Chord { bass :: Note, intervals :: [ Interval ] } deriving (Show, Eq)
 
-_M2 = Interval 1 2 0
+
+data Root = I | II | III | IV | V | VI | VII deriving (Show, Eq, Ord)
+
+data Inversion = First | Second | Third | Fourth | Fifth | Sixth deriving (Show, Eq, Ord)
+
+data Harmony = Harmony Root [Interval] Inversion deriving (Show, Eq)
+
+data Key = Key Diatone Alter deriving (Show, Eq)
+
+
+
+data Chord = Chord Note [Interval] deriving (Show, Eq)
+
+intervalsToChord :: Note -> [Interval] -> Chord
+intervalsToChord n is = Chord n $ sortBy (comparing chr) $ map normalise is
+
+notesToChord :: Note -> [Note] -> Chord
+notesToChord bass ns = intervalsToChord bass $ map (interval bass) ns
+
+chordToNotes :: Chord -> [Note]
+chordToNotes (Chord bass is) = bass : (map (applyInterval bass) is)
+
+harmonyToChord :: Key -> Harmony -> Chord
+harmonyToChord k h@(Harmony r is First) = Chord (bassOfHarmony k h) is
+
+bassOfHarmony :: Key -> Harmony -> Note
+bassOfHarmony (Key d a) (Harmony r _ First) = applyInterval (Note d a 3) (rootToInterval r)
+
+rootToInterval :: Root -> Interval
+rootToInterval I = Interval 0 0 0
+rootToInterval II = Interval 1 2 0
+rootToInterval III = Interval 2 4 0
+rootToInterval IV = Interval 3 5 0
+rootToInterval V = Interval 4 7 0
+rootToInterval VI = Interval 5 9 0
+rootToInterval VII = Interval 6 11 0
+
+applyInterval (Note d a o) (Interval di ci oi) = Note d' a' o'
+  where
+    dd = fromEnum d + fromEnum di
+    d' = toEnum $ dd `mod` 7
+    a' = a
+    o' = o + oi + (dd `div` 7)
+
+
+
 _m3 = Interval 2 3 0
 _M3 = Interval 2 4 0
-_P4 = Interval 3 5 0
-_d5 = Interval 4 6 0
 _P5 = Interval 4 7 0
-_m6 = Interval 5 8 0
-_M6 = Interval 5 9 0
+_m7 = Interval 6 10 0
+
+_I = Harmony I [_M3, _P5] First
+_ii = Harmony II [_m3, _P5] First
+_V7 = Harmony V [_M3, _P5, _m7] First
+
+keyOfC = Key C Nat
+
+progression = [ _I, _ii, _V7, _I ]
+
+chords :: [[Event]]
+chords = map ((map (Play (1%4))) . grow . chordToNotes . (harmonyToChord keyOfC)) progression
+  where
+    grow (a:b:c:[]) = a:b:c:up a:up b:[]
+    grow (a:b:c:d:[]) = a:b:c:d:up b:[]
+    up = modifyOctave 1
+
 
 
 -- C Major prelude - Book one, well tempered clavier
-chords = [
+chordsTEMP = [
     [c, e, g, c', e'],    -- C:I         -- (c, [3, 5])          -- C
     [c, d, a, d', f'],    -- iib         -- (c, [2, 4, 6])       -- Dm/C
     [b_, d, g, b, f'],    -- V7b         -- (b_, [3, 5, 6])      -- G7/B
@@ -81,9 +141,9 @@ prelude = music $ map (.>>2) [ bass, tenor, treble ]
     body = foldr (concatParts.chordToParts) ([],[],[]) chords
     concatParts (bs',ts',trs') (bs,ts,trs) = (bs'++bs, ts'++ts, trs'++trs)
 
---main = createMidi "test.midi" $ prelude
+main = createMidi "test.midi" $ prelude
 
-main = putStrLn $ show $ Melody.analyse prelude
+--main = putStrLn $ show $ Melody.analyse prelude
 
 
 --main = createMidi "test.midi" $ music [ [c, d].>>2, [e, f].>>2, [g, a].>>2 ]

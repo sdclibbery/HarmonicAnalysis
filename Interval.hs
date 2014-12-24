@@ -10,6 +10,8 @@ module Interval (
   Quality(..),
   quality,
 
+  normalise,
+
   consonant,
   dissonant,
   diminished,
@@ -70,6 +72,12 @@ quality (Interval 6 11 0) = Major
 quality (Interval 6 12 0) = Augmented
 quality (Interval d c o) | d < 0 = quality (Interval (-d) (-c) (-o))
 quality (Interval d c o) | o > 0 = quality (Interval (d `mod` 7) (c `mod` 12) (o-1))
+
+-- |Normalise an interval so it is within the range [unison -> thirteenth]
+normalise :: Interval -> Interval
+normalise (Interval d c o) | d < 0 = normalise (Interval (-d) (-c) (-o))
+normalise (Interval d c o) | d > 12 = normalise (Interval (d - 7) (c - 12) (o - 1))
+normalise i = i
 
 -- |Check if an interval is dissonant
 dissonant :: Interval -> Bool
