@@ -55,6 +55,11 @@ applyInterval (Note d a o) (Interval di ci oi) = Note d' a' o'
     a' = a
     o' = o + oi + (dd `div` 7)
 
+-- applyInterval needs to handle sharps/flats/keys etc
+-- bassOfHarmony needs to handle inversions
+-- harmonyToChord needs to handle inversions
+-- What about minor keys? Re harmonyToChord etc
+-- Next: mechanisms for expanding chords out into parts that obey voice leading rules...
 
 
 _m3 = Interval 2 3 0
