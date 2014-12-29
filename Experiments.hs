@@ -44,16 +44,16 @@ harmonyToChord :: Key -> Harmony -> Chord
 harmonyToChord k h@(Harmony r a is First) = Chord (bassOfHarmony k h) is
 
 bassOfHarmony :: Key -> Harmony -> Note
-bassOfHarmony (Key d a q) (Harmony r al _ First) = applyInterval (Note d a 3) (rootToInterval r al)
+bassOfHarmony (Key d a q) (Harmony r al _ First) = applyInterval (Note d a 3) (rootToInterval r al q)
 
-rootToInterval :: Root -> Alter-> Interval
-rootToInterval I Nat = Interval 0 0 0
-rootToInterval II Nat = Interval 1 2 0
-rootToInterval III Nat = Interval 2 4 0
-rootToInterval IV Nat = Interval 3 5 0
-rootToInterval V Nat = Interval 4 7 0
-rootToInterval VI Nat = Interval 5 9 0
-rootToInterval VII Nat = Interval 6 11 0
+rootToInterval :: Root -> Alter-> KeyQuality -> Interval
+rootToInterval I Nat KeyMajor = Interval 0 0 0
+rootToInterval II Nat KeyMajor = Interval 1 2 0
+rootToInterval III Nat KeyMajor = Interval 2 4 0
+rootToInterval IV Nat KeyMajor = Interval 3 5 0
+rootToInterval V Nat KeyMajor = Interval 4 7 0
+rootToInterval VI Nat KeyMajor = Interval 5 9 0
+rootToInterval VII Nat KeyMajor = Interval 6 11 0
 
 applyInterval (Note d a o) (Interval di ci oi) = Note d' a' o'
   where
@@ -63,8 +63,9 @@ applyInterval (Note d a o) (Interval di ci oi) = Note d' a' o'
     o' = o + oi + (dd `div` 7)
 
 -- applyInterval needs to handle sharps/flats/keys etc
--- bassOfHarmony needs to handle inversions and keys; esp minor keys
+-- bassOfHarmony needs to handle inversions
 -- harmonyToChord needs to handle inversions
+-- bassOfHarmony needs to handle octave somehow..?
 -- Next: mechanisms for expanding chords out into parts that obey voice leading rules...
 
 
