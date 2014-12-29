@@ -1,7 +1,7 @@
 import Structure
 import Note
 import Interval
-import Compose
+import Notes
 import Midi
 import Melody
 import Harmony

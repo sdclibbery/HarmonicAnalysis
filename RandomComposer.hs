@@ -2,7 +2,7 @@ import Data.List
 import Data.Ratio
 import Structure
 import Note
-import Compose
+import Notes
 import Midi
 import Data.Ord
 import System.Random

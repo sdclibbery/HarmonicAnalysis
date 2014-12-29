@@ -1,7 +1,7 @@
 import Structure
 import Note
 import Interval
-import Compose
+import Notes
 import Midi
 import Harmony
 import Melody
@@ -76,10 +76,10 @@ keyOfC = Key C Nat
 progression = [ _I, _ii, _V7, _I ]
 
 chords :: [[Event]]
-chords = map ((map (Play (1%4))) . grow . chordToNotes . (harmonyToChord keyOfC)) progression
+chords = map ((map (Play (1%4))) . extend . chordToNotes . (harmonyToChord keyOfC)) progression
   where
-    grow (a:b:c:[]) = a:b:c:up a:up b:[]
-    grow (a:b:c:d:[]) = a:b:c:d:up b:[]
+    extend (a:b:c:[]) = a:b:c:up a:up b:[]
+    extend (a:b:c:d:[]) = a:b:c:d:up b:[]
     up = modifyOctave 1
 
 

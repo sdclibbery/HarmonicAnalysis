@@ -6,7 +6,7 @@ import Note
 import Structure
 import Report
 import Harmony
-import Compose
+import Notes
 
 tests = TestLabel "Harmony" $ TestList
   [ testRuleH96

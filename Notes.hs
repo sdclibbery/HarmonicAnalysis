@@ -3,7 +3,7 @@ Module      : Compose
 Description : Helpers to make composition easier
 -}
 
-module Compose where
+module Notes where
 import Note
 import Structure
 import Data.Ratio
