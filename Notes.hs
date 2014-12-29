@@ -1,6 +1,6 @@
 {-|
-Module      : Compose
-Description : Helpers to make composition easier
+Module      : Notes
+Description : Lists of note values
 -}
 
 module Notes where

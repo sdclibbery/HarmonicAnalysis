@@ -1,6 +1,7 @@
 import Structure
 import Note
 import Interval
+import Intervals
 import Notes
 import Midi
 import Harmony
@@ -61,11 +62,6 @@ applyInterval (Note d a o) (Interval di ci oi) = Note d' a' o'
 -- What about minor keys? Re harmonyToChord etc
 -- Next: mechanisms for expanding chords out into parts that obey voice leading rules...
 
-
-_m3 = Interval 2 3 0
-_M3 = Interval 2 4 0
-_P5 = Interval 4 7 0
-_m7 = Interval 6 10 0
 
 _I = Harmony I [_M3, _P5] First
 _ii = Harmony II [_m3, _P5] First
