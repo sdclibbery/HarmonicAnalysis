@@ -13,13 +13,19 @@ import Data.Ratio
 
 
 
+data KeyQuality = KeyMajor | KeyMinor deriving (Show, Eq)
+
+data Key = Key Diatone Alter KeyQuality deriving (Show, Eq)
+
+keyOfC = Key C Nat KeyMajor
+
+
+
 data Root = I | II | III | IV | V | VI | VII deriving (Show, Eq, Ord)
 
 data Inversion = First | Second | Third | Fourth | Fifth | Sixth deriving (Show, Eq, Ord)
 
-data Harmony = Harmony Root [Interval] Inversion deriving (Show, Eq)
-
-data Key = Key Diatone Alter deriving (Show, Eq)
+data Harmony = Harmony Root Alter [Interval] Inversion deriving (Show, Eq)
 
 
 
@@ -35,19 +41,19 @@ chordToNotes :: Chord -> [Note]
 chordToNotes (Chord bass is) = bass : (map (applyInterval bass) is)
 
 harmonyToChord :: Key -> Harmony -> Chord
-harmonyToChord k h@(Harmony r is First) = Chord (bassOfHarmony k h) is
+harmonyToChord k h@(Harmony r a is First) = Chord (bassOfHarmony k h) is
 
 bassOfHarmony :: Key -> Harmony -> Note
-bassOfHarmony (Key d a) (Harmony r _ First) = applyInterval (Note d a 3) (rootToInterval r)
+bassOfHarmony (Key d a q) (Harmony r al _ First) = applyInterval (Note d a 3) (rootToInterval r al)
 
-rootToInterval :: Root -> Interval
-rootToInterval I = Interval 0 0 0
-rootToInterval II = Interval 1 2 0
-rootToInterval III = Interval 2 4 0
-rootToInterval IV = Interval 3 5 0
-rootToInterval V = Interval 4 7 0
-rootToInterval VI = Interval 5 9 0
-rootToInterval VII = Interval 6 11 0
+rootToInterval :: Root -> Alter-> Interval
+rootToInterval I Nat = Interval 0 0 0
+rootToInterval II Nat = Interval 1 2 0
+rootToInterval III Nat = Interval 2 4 0
+rootToInterval IV Nat = Interval 3 5 0
+rootToInterval V Nat = Interval 4 7 0
+rootToInterval VI Nat = Interval 5 9 0
+rootToInterval VII Nat = Interval 6 11 0
 
 applyInterval (Note d a o) (Interval di ci oi) = Note d' a' o'
   where
@@ -57,17 +63,14 @@ applyInterval (Note d a o) (Interval di ci oi) = Note d' a' o'
     o' = o + oi + (dd `div` 7)
 
 -- applyInterval needs to handle sharps/flats/keys etc
--- bassOfHarmony needs to handle inversions
+-- bassOfHarmony needs to handle inversions and keys; esp minor keys
 -- harmonyToChord needs to handle inversions
--- What about minor keys? Re harmonyToChord etc
 -- Next: mechanisms for expanding chords out into parts that obey voice leading rules...
 
 
-_I = Harmony I [_M3, _P5] First
-_ii = Harmony II [_m3, _P5] First
-_V7 = Harmony V [_M3, _P5, _m7] First
-
-keyOfC = Key C Nat
+_I = Harmony I Nat [_M3, _P5] First
+_ii = Harmony II Nat [_m3, _P5] First
+_V7 = Harmony V Nat [_M3, _P5, _m7] First
 
 progression = [ _I, _ii, _V7, _I ]
 
