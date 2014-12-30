@@ -6,18 +6,11 @@ import Notes
 import Midi
 import Harmony
 import Melody
+import Key
+import Keys
 import Data.List
 import Data.Ord
 import Data.Ratio
-
-
-
-
-data KeyQuality = KeyMajor | KeyMinor deriving (Show, Eq)
-
-data Key = Key Diatone Alter KeyQuality deriving (Show, Eq)
-
-keyOfC = Key C Nat KeyMajor
 
 
 
@@ -99,7 +92,7 @@ harmonyToChord k h@(Harmony r a is inv) = chordFrom $ relocate $ rotate (fromEnu
     relocate ns = if fromEnum inv + fromEnum r > 3 then map (modifyOctave (-1)) ns else ns
 
 
--- Break out things into helpers
+-- Break out things into other modules
 -- Next: mechanisms for expanding chords out into parts that obey voice leading rules...
 
 
