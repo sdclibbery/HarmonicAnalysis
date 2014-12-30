@@ -45,30 +45,39 @@ data Harmony = Harmony Root Alter [Interval] Inversion deriving (Show, Eq)
 rootNote :: Key -> Int -> Harmony -> Note
 rootNote (Key d a q) o (Harmony r al _ _) = applyInterval (Note d a o) (rootToInterval r al q)
   where
-    rootToInterval I Nat KeyMajor = Interval 0 0 0
-    rootToInterval II Nat KeyMajor = Interval 1 2 0
-    rootToInterval III Nat KeyMajor = Interval 2 4 0
-    rootToInterval IV Nat KeyMajor = Interval 3 5 0
-    rootToInterval V Nat KeyMajor = Interval 4 7 0
-    rootToInterval VI Nat KeyMajor = Interval 5 9 0
-    rootToInterval VII Nat KeyMajor = Interval 6 11 0
+    rootToInterval I Nat KeyMajor = _P1
+    rootToInterval II Nat KeyMajor = _M2
+    rootToInterval III Nat KeyMajor = _M3
+    rootToInterval IV Nat KeyMajor = _P4
+    rootToInterval V Nat KeyMajor = _P5
+    rootToInterval VI Nat KeyMajor = _M6
+    rootToInterval VII Nat KeyMajor = _M7
+    rootToInterval I Nat KeyMinor = _P1
+    rootToInterval II Nat KeyMinor = _M2
+    rootToInterval III Nat KeyMinor = _m3
+    rootToInterval IV Nat KeyMinor = _P4
+    rootToInterval V Nat KeyMinor = _P5
+    rootToInterval VI Nat KeyMinor = _m6
+    rootToInterval VII Nat KeyMinor = _m7
 
 harmonyToChord :: Key -> Harmony -> Chord
-harmonyToChord k h@(Harmony r a is inv) = chordFrom $ rotate (fromEnum inv) notes
+harmonyToChord k h@(Harmony r a is inv) = chordFrom $ relocate $ rotate (fromEnum inv) notes
   where
-    root = rootNote k 3 h
+    baseOctave = 3
+    root = rootNote k baseOctave h
     notes = root : (map (applyInterval root) is)
     chordFrom ns = Chord (head ns) $ map (normalise . (interval $ head ns)) (tail ns)
     rotate n xs = take (length xs) (drop n (cycle xs))
+    relocate ns = if fromEnum inv + fromEnum r > 3 then map (modifyOctave (-1)) ns else ns
 
 
--- harmonyToChord should make sure that the intervals are all positive and increasing in pitch
--- harmonyToChord: octave?
--- rootToInterval needs to handle minor key
+-- rootNote needs to handle Alterations to root notes
 -- Next: mechanisms for expanding chords out into parts that obey voice leading rules...
 
 
 _I = Harmony I Nat [_M3, _P5] First
+_Ib = Harmony I Nat [_M3, _P5] Second
+_Ic = Harmony I Nat [_M3, _P5] Third
 
 _ii = Harmony II Nat [_m3, _P5] First
 _ii7d = Harmony II Nat [_m3, _P5, _m7] Fourth
