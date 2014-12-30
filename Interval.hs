@@ -11,6 +11,7 @@ module Interval (
   quality,
 
   normalise,
+  applyInterval,
 
   consonant,
   dissonant,
@@ -78,6 +79,16 @@ normalise :: Interval -> Interval
 normalise (Interval d c o) | d < 0 = normalise (Interval (-d) (-c) (-o))
 normalise (Interval d c o) | d > 12 = normalise (Interval (d - 7) (c - 12) (o - 1))
 normalise i = i
+
+-- |Apply an Interval to a Note: offset the note by the given interval
+applyInterval :: Note -> Interval -> Note
+applyInterval n@(Note d a o) (Interval di ci oi) = Note d' a' o'
+  where
+    dd = fromEnum d + di
+    chromaticDiff = absChromatic (Note d' Nat o') - absChromatic n
+    d' = toEnum $ dd `mod` 7
+    a' = toEnum $ fromEnum Nat + ci - chromaticDiff
+    o' = o + oi + (dd `div` 7)
 
 -- |Check if an interval is dissonant
 dissonant :: Interval -> Bool

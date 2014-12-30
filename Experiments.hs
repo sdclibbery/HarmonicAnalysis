@@ -55,14 +55,6 @@ rootToInterval V Nat KeyMajor = Interval 4 7 0
 rootToInterval VI Nat KeyMajor = Interval 5 9 0
 rootToInterval VII Nat KeyMajor = Interval 6 11 0
 
-applyInterval :: Note -> Interval -> Note
-applyInterval n@(Note d a o) (Interval di ci oi) = Note d' a' o'
-  where
-    dd = fromEnum d + di
-    chromaticDiff = absChromatic (Note d' Nat o') - absChromatic n
-    d' = toEnum $ dd `mod` 7
-    a' = toEnum $ fromEnum Nat + ci - chromaticDiff
-    o' = o + oi + (dd `div` 7)
 
 -- bassOfHarmony needs to handle inversions
 -- harmonyToChord needs to handle inversions
