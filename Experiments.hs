@@ -8,23 +8,10 @@ import Harmony
 import Melody
 import Key
 import Keys
-import Data.List
-import Data.Ord
+import Chord
 import Data.Ratio
 
 
-
-
-data Chord = Chord Note [Interval] deriving (Show, Eq)
-
-intervalsToChord :: Note -> [Interval] -> Chord
-intervalsToChord n is = Chord n $ sortBy (comparing chr) $ map normalise is
-
-notesToChord :: Note -> [Note] -> Chord
-notesToChord bass ns = intervalsToChord bass $ map (interval bass) ns
-
-chordToNotes :: Chord -> [Note]
-chordToNotes (Chord bass is) = bass : map (applyInterval bass) is
 
 
 
@@ -87,7 +74,7 @@ harmonyToChord k h@(Harmony r a is inv) = chordFrom $ relocate $ rotate (fromEnu
     baseOctave = 3
     root = rootNote k baseOctave h
     notes = root : (map (applyInterval root) is)
-    chordFrom ns = Chord (head ns) $ map (normalise . (interval $ head ns)) (tail ns)
+    chordFrom ns = notesToChord (head ns) (tail ns)
     rotate n xs = take (length xs) (drop n (cycle xs))
     relocate ns = if fromEnum inv + fromEnum r > 3 then map (modifyOctave (-1)) ns else ns
 
