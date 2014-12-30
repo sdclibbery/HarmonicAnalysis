@@ -34,12 +34,17 @@ data Interval = Interval {dia :: Int, chr :: Int, oct :: Int} deriving (Eq)
 
 -- |Create an interval from two notes
 interval :: Note -> Note -> Interval
-interval n n' = Interval (absDiatonic n' - absDiatonic n) (absChromatic n' - absChromatic n) (Note.octave n' - Note.octave n)
+interval n n' = Interval d c o
+  where
+    d = absDiatonic n' - absDiatonic n
+    c = absChromatic n' - absChromatic n
+    o = c `div` 12
 
 instance Show Interval where
-  show i = sign ++ (show $ quality i) ++ (show $ abs(dia i) + 1)
+  show i = sign ++ (show $ quality i) ++ (show $ abs(dia i) + 1) ++ octave
     where
       sign = if dia i < 0 then "-" else ""
+      octave = if oct i /= 0 then "^"++(show $ oct i) else ""
 
 -- |Interval Quality
 data Quality = Perfect | Major | Minor | Diminished | Augmented deriving (Eq, Show)
@@ -76,8 +81,8 @@ quality (Interval d c o) | o > 0 = quality (Interval (d `mod` 7) (c `mod` 12) (o
 
 -- |Normalise an interval so it is within the range [unison -> thirteenth]
 normalise :: Interval -> Interval
-normalise (Interval d c o) | d < 0 = normalise (Interval (-d) (-c) (-o))
-normalise (Interval d c o) | d > 12 = normalise (Interval (d - 7) (c - 12) (o - 1))
+normalise (Interval d c o) | d < 0 = normalise $ Interval (-d) (-c) (-o)
+normalise (Interval d c o) | d > 6 = normalise $ Interval (d - 7) (c - 12) (o - 1)
 normalise i = i
 
 -- |Apply an Interval to a Note: offset the note by the given interval

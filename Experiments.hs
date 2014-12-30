@@ -21,13 +21,6 @@ keyOfC = Key C Nat KeyMajor
 
 
 
-data Root = I | II | III | IV | V | VI | VII deriving (Show, Eq, Ord)
-
-data Inversion = First | Second | Third | Fourth | Fifth | Sixth deriving (Show, Eq, Ord)
-
-data Harmony = Harmony Root Alter [Interval] Inversion deriving (Show, Eq)
-
-
 
 data Chord = Chord Note [Interval] deriving (Show, Eq)
 
@@ -40,32 +33,51 @@ notesToChord bass ns = intervalsToChord bass $ map (interval bass) ns
 chordToNotes :: Chord -> [Note]
 chordToNotes (Chord bass is) = bass : map (applyInterval bass) is
 
+
+
+
+data Root = I | II | III | IV | V | VI | VII deriving (Show, Eq, Ord, Enum)
+
+data Inversion = First | Second | Third | Fourth | Fifth | Sixth deriving (Show, Eq, Ord, Enum)
+
+data Harmony = Harmony Root Alter [Interval] Inversion deriving (Show, Eq)
+
+rootNote :: Key -> Int -> Harmony -> Note
+rootNote (Key d a q) o (Harmony r al _ _) = applyInterval (Note d a o) (rootToInterval r al q)
+  where
+    rootToInterval I Nat KeyMajor = Interval 0 0 0
+    rootToInterval II Nat KeyMajor = Interval 1 2 0
+    rootToInterval III Nat KeyMajor = Interval 2 4 0
+    rootToInterval IV Nat KeyMajor = Interval 3 5 0
+    rootToInterval V Nat KeyMajor = Interval 4 7 0
+    rootToInterval VI Nat KeyMajor = Interval 5 9 0
+    rootToInterval VII Nat KeyMajor = Interval 6 11 0
+
 harmonyToChord :: Key -> Harmony -> Chord
-harmonyToChord k h@(Harmony r a is First) = Chord (bassOfHarmony k h) is
-
-bassOfHarmony :: Key -> Harmony -> Note
-bassOfHarmony (Key d a q) (Harmony r al _ First) = applyInterval (Note d a 3) (rootToInterval r al q)
-
-rootToInterval :: Root -> Alter-> KeyQuality -> Interval
-rootToInterval I Nat KeyMajor = Interval 0 0 0
-rootToInterval II Nat KeyMajor = Interval 1 2 0
-rootToInterval III Nat KeyMajor = Interval 2 4 0
-rootToInterval IV Nat KeyMajor = Interval 3 5 0
-rootToInterval V Nat KeyMajor = Interval 4 7 0
-rootToInterval VI Nat KeyMajor = Interval 5 9 0
-rootToInterval VII Nat KeyMajor = Interval 6 11 0
+harmonyToChord k h@(Harmony r a is inv) = chordFrom $ rotate (fromEnum inv) notes
+  where
+    root = rootNote k 3 h
+    notes = root : (map (applyInterval root) is)
+    chordFrom ns = Chord (head ns) $ map (normalise . (interval $ head ns)) (tail ns)
+    rotate n xs = take (length xs) (drop n (cycle xs))
 
 
--- bassOfHarmony needs to handle inversions
--- harmonyToChord needs to handle inversions
--- bassOfHarmony needs to handle octave somehow..?
+-- harmonyToChord should make sure that the intervals are all positive and increasing in pitch
+-- harmonyToChord: octave?
+-- rootToInterval needs to handle minor key
 -- Next: mechanisms for expanding chords out into parts that obey voice leading rules...
 
 
 _I = Harmony I Nat [_M3, _P5] First
-_ii = Harmony II Nat [_m3, _P5] First
-_V7 = Harmony V Nat [_M3, _P5, _m7] First
 
+_ii = Harmony II Nat [_m3, _P5] First
+_ii7d = Harmony II Nat [_m3, _P5, _m7] Fourth
+
+_V = Harmony V Nat [_M3, _P5] First
+_V7 = Harmony V Nat [_M3, _P5, _m7] First
+_V7b = Harmony V Nat [_M3, _P5, _m7] Second
+
+--progression = [ _I, _ii7d, _V7b, _I ]
 progression = [ _I, _ii, _V7, _I ]
 
 chords :: [[Event]]
@@ -80,7 +92,7 @@ chords = map ((map (Play (1%4))) . extend . chordToNotes . (harmonyToChord keyOf
 -- C Major prelude - Book one, well tempered clavier
 chordsTEMP = [
     [c, e, g, c', e'],    -- C:I         -- (c, [3, 5])          -- C
-    [c, d, a, d', f'],    -- iib         -- (c, [2, 4, 6])       -- Dm/C
+    [c, d, a, d', f'],    -- ii7d        -- (c, [2, 4, 6])       -- Dm/C
     [b_, d, g, b, f'],    -- V7b         -- (b_, [3, 5, 6])      -- G7/B
     [c, e, g, c', e'],    -- I           -- (c, [3, 5])          -- C
     [c, e, a, e', a'],    -- vib         -- (c, [3, 6])          -- Am/C
