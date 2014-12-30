@@ -77,8 +77,7 @@ _V = Harmony V Nat [_M3, _P5] First
 _V7 = Harmony V Nat [_M3, _P5, _m7] First
 _V7b = Harmony V Nat [_M3, _P5, _m7] Second
 
---progression = [ _I, _ii7d, _V7b, _I ]
-progression = [ _I, _ii, _V7, _I ]
+progression = [ _I, _ii7d, _V7b, _I ]
 
 chords :: [[Event]]
 chords = map ((map (Play (1%4))) . extend . chordToNotes . (harmonyToChord keyOfC)) progression

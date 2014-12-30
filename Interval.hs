@@ -38,7 +38,7 @@ interval n n' = Interval d c o
   where
     d = absDiatonic n' - absDiatonic n
     c = absChromatic n' - absChromatic n
-    o = c `div` 12
+    o = if c < 0 then 1 + (c `div` 12) else c `div` 12
 
 instance Show Interval where
   show i = sign ++ (show $ quality i) ++ (show $ abs(dia i) + 1) ++ octave
@@ -82,8 +82,7 @@ quality (Interval d c o) | o > 0 = quality (Interval (d `mod` 7) (c `mod` 12) (o
 -- |Normalise an interval so it is within the range [unison -> thirteenth]
 normalise :: Interval -> Interval
 normalise (Interval d c o) | d < 0 = normalise $ Interval (-d) (-c) (-o)
-normalise (Interval d c o) | d > 6 = normalise $ Interval (d - 7) (c - 12) (o - 1)
-normalise i = i
+normalise (Interval d c o) = Interval (d `mod` 7) (c `mod` 12) 0
 
 -- |Apply an Interval to a Note: offset the note by the given interval
 applyInterval :: Note -> Interval -> Note
