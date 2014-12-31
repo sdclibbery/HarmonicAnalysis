@@ -9,95 +9,30 @@ import Melody
 import Key
 import Keys
 import Chord
+import Numeral
 import Data.Ratio
 
 
+_I = Numeral I Nat [_M3, _P5] First
+_Ib = Numeral I Nat [_M3, _P5] Second
+_Ic = Numeral I Nat [_M3, _P5] Third
 
+_ii = Numeral II Nat [_m3, _P5] First
+_ii7d = Numeral II Nat [_m3, _P5, _m7] Fourth
 
-
-
-data Root = I | II | III | IV | V | VI | VII deriving (Show, Eq, Ord, Enum)
-
-data Inversion = First | Second | Third | Fourth | Fifth | Sixth deriving (Show, Eq, Ord, Enum)
-
-data Harmony = Harmony Root Alter [Interval] Inversion deriving (Show, Eq)
-
-rootNote :: Key -> Int -> Harmony -> Note
-rootNote (Key d a q) o (Harmony r al _ _) = applyInterval (Note d a o) (rootToInterval r al q)
-  where
-    rootToInterval I Fl KeyMajor = _d1
-    rootToInterval I Nat KeyMajor = _P1
-    rootToInterval I Sh KeyMajor = _a1
-    rootToInterval II Fl KeyMajor = _m2
-    rootToInterval II Nat KeyMajor = _M2
-    rootToInterval II Sh KeyMajor = _a2
-    rootToInterval III Fl KeyMajor = _m3
-    rootToInterval III Nat KeyMajor = _M3
-    rootToInterval III Sh KeyMajor = _a3
-    rootToInterval IV Fl KeyMajor = _d4
-    rootToInterval IV Nat KeyMajor = _P4
-    rootToInterval IV Sh KeyMajor = _a4
-    rootToInterval V Fl KeyMajor = _d5
-    rootToInterval V Nat KeyMajor = _P5
-    rootToInterval V Sh KeyMajor = _a5
-    rootToInterval VI Fl KeyMajor = _m6
-    rootToInterval VI Nat KeyMajor = _M6
-    rootToInterval VI Sh KeyMajor = _a6
-    rootToInterval VII Fl KeyMajor = _m7
-    rootToInterval VII Nat KeyMajor = _M7
-    rootToInterval VII Sh KeyMajor = _a7
-    rootToInterval I Fl KeyMinor = _d1
-    rootToInterval I Nat KeyMinor = _P1
-    rootToInterval I Sh KeyMinor = _a1
-    rootToInterval II Fl KeyMinor = _m2
-    rootToInterval II Nat KeyMinor = _M2
-    rootToInterval II Sh KeyMinor = _a2
-    rootToInterval III Fl KeyMinor = _m3
-    rootToInterval III Nat KeyMinor = _M3
-    rootToInterval III Sh KeyMinor = _a3
-    rootToInterval IV Fl KeyMinor = _d4
-    rootToInterval IV Nat KeyMinor = _P4
-    rootToInterval IV Sh KeyMinor = _a4
-    rootToInterval V Fl KeyMinor = _d5
-    rootToInterval V Nat KeyMinor = _P5
-    rootToInterval V Sh KeyMinor = _a5
-    rootToInterval VI Fl KeyMinor = _d6
-    rootToInterval VI Nat KeyMinor = _m6
-    rootToInterval VI Sh KeyMinor = _M6
-    rootToInterval VII Fl KeyMinor = _d7
-    rootToInterval VII Nat KeyMinor = _m7
-    rootToInterval VII Sh KeyMinor = _M7
-
-harmonyToChord :: Key -> Harmony -> Chord
-harmonyToChord k h@(Harmony r a is inv) = chordFrom $ relocate $ rotate (fromEnum inv) notes
-  where
-    baseOctave = 3
-    root = rootNote k baseOctave h
-    notes = root : (map (applyInterval root) is)
-    chordFrom ns = notesToChord (head ns) (tail ns)
-    rotate n xs = take (length xs) (drop n (cycle xs))
-    relocate ns = if fromEnum inv + fromEnum r > 3 then map (modifyOctave (-1)) ns else ns
+_V = Numeral V Nat [_M3, _P5] First
+_V7 = Numeral V Nat [_M3, _P5, _m7] First
+_V7b = Numeral V Nat [_M3, _P5, _m7] Second
 
 
 -- Break out things into other modules
 -- Next: mechanisms for expanding chords out into parts that obey voice leading rules...
 
 
-_I = Harmony I Nat [_M3, _P5] First
-_Ib = Harmony I Nat [_M3, _P5] Second
-_Ic = Harmony I Nat [_M3, _P5] Third
-
-_ii = Harmony II Nat [_m3, _P5] First
-_ii7d = Harmony II Nat [_m3, _P5, _m7] Fourth
-
-_V = Harmony V Nat [_M3, _P5] First
-_V7 = Harmony V Nat [_M3, _P5, _m7] First
-_V7b = Harmony V Nat [_M3, _P5, _m7] Second
-
 progression = [ _I, _ii7d, _V7b, _I ]
 
 chords :: [[Event]]
-chords = map ((map (Play (1%4))) . extend . chordToNotes . (harmonyToChord keyOfC)) progression
+chords = map ((map (Play (1%4))) . extend . chordToNotes . (numeralToChord keyOfC)) progression
   where
     extend (a:b:c:[]) = a:b:c:up a:up b:[]
     extend (a:b:c:d:[]) = a:b:c:d:up b:[]
