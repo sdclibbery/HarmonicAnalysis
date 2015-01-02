@@ -82,6 +82,7 @@ quality (Interval d c o) | o > 0 = quality (Interval (d `mod` 7) (c `mod` 12) (o
 -- |Normalise an interval so it is within an octave
 normalise :: Interval -> Interval
 normalise (Interval d c o) | d < 0 = normalise $ Interval (d+7) (c+12) (o+1)
+normalise i@(Interval d c o) | c < 0 = i
 normalise (Interval d c o) = Interval (d `mod` 7) (c `mod` 12) 0
 
 -- |Apply an Interval to a Note: offset the note by the given interval

@@ -13,6 +13,11 @@ _I = Numeral I Nat [_M3, _P5] First
 _Ib = Numeral I Nat [_M3, _P5] Second
 _Ic = Numeral I Nat [_M3, _P5] Third
 
+_I7 = Numeral I Nat [_M3, _P5, _m7] First
+_I7b = Numeral I Nat [_M3, _P5, _m7] Second
+_I7c = Numeral I Nat [_M3, _P5, _m7] Third
+_I7d = Numeral I Nat [_M3, _P5, _m7] Fourth
+
 _Imaj7 = Numeral I Nat [_M3, _P5, _M7] First
 _Imaj7b = Numeral I Nat [_M3, _P5, _M7] Second
 _Imaj7c = Numeral I Nat [_M3, _P5, _M7] Third
@@ -58,15 +63,6 @@ _V7sus4 = Numeral V Nat [_P4, _P5, _m7] First
 _V7sus4b = Numeral V Nat [_P4, _P5, _m7] Second
 _V7sus4c = Numeral V Nat [_P4, _P5, _m7] Third
 _V7sus4d = Numeral V Nat [_P4, _P5, _m7] Fourth
-
-_VofV = Numeral II Nat [_M3, _P5] First
-_VofVb = Numeral II Nat [_M3, _P5] Second
-_VofVc = Numeral II Nat [_M3, _P5] Third
-
-_V7ofV = Numeral II Nat [_M3, _P5, _M7] First
-_V7ofVb = Numeral II Nat [_M3, _P5, _M7] Second
-_V7ofVc = Numeral II Nat [_M3, _P5, _M7] Third
-_V7ofVd = Numeral II Nat [_M3, _P5, _M7] Fourth
 
 _vi = Numeral VI Nat [_m3, _P5] First
 _vib = Numeral VI Nat [_m3, _P5] Second
@@ -140,4 +136,29 @@ _VII7 = Numeral VII Nat [_M3, _P5, _m7] First
 _VII7b = Numeral VII Nat [_M3, _P5, _m7] Second
 _VII7c = Numeral VII Nat [_M3, _P5, _m7] Third
 _VII7d = Numeral VII Nat [_M3, _P5, _m7] Fourth
+
+-- Secondary dominants
+
+_iiofIV = Numeral V Nat [_m3, _P5] First
+_iibofIV = Numeral V Nat [_m3, _P5] Second
+_iicofIV = Numeral V Nat [_m3, _P5] Third
+
+_ii7ofIV = Numeral V Nat [_m3, _P5, _m7] First
+_ii7bofIV = Numeral V Nat [_m3, _P5, _m7] Second
+_ii7cofIV = Numeral V Nat [_m3, _P5, _m7] Third
+_ii7dofIV = Numeral V Nat [_m3, _P5, _m7] Fourth
+
+_VofV = Numeral II Nat [_M3, _P5] First
+_VofVb = Numeral II Nat [_M3, _P5] Second
+_VofVc = Numeral II Nat [_M3, _P5] Third
+
+_V7ofV = Numeral II Nat [_M3, _P5, _M7] First
+_V7ofVb = Numeral II Nat [_M3, _P5, _M7] Second
+_V7ofVc = Numeral II Nat [_M3, _P5, _M7] Third
+_V7ofVd = Numeral II Nat [_M3, _P5, _M7] Fourth
+
+_viio7ofIV = Numeral III Nat [_m3, _d5, _d7] First
+_viio7bofIV = Numeral III Nat [_m3, _d5, _d7] Second
+_viio7cofIV = Numeral III Nat [_m3, _d5, _d7] Third
+_viio7dofIV = Numeral III Nat [_m3, _d5, _d7] Fourth
 

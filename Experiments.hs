@@ -14,22 +14,46 @@ import Numerals
 import Data.Ratio
 
 
+type Progression = [(Key, [Numeral])]
+
+progressionToChords :: Progression -> [[Event]]
+progressionToChords p = concat $ map (\(k, ns) -> numeralsToChords k ns) p
+  where
+    extend (a:b:c:[]) = a:b:c:up b:up a:[]
+    extend (a:b:c:d:[]) = a:b:c:d:up b:[]
+    extend (a:b:c:d:e:[]) = a:b:c:d:e:[]
+    up = modifyOctave 1
+    numeralsToChords k ns = map ((map (Play (1%4))) . extend . chordToNotes . (numeralToChord k)) ns
+
+
+
 -- Next: mechanisms for expanding chords out into parts that obey voice leading rules...
 
 
-progression = [ _I, _ii7d, _V7b, _I, _vib, _V7ofVd ]
-
-chords :: [[Event]]
-chords = map ((map (Play (1%4))) . extend . chordToNotes . (numeralToChord keyOfC)) progression
+numeralToChordT k h@(Numeral r a is inv) = chordFrom $ relocate $ rotate (fromEnum inv) notes
   where
-    extend (a:b:c:[]) = a:b:c:up a:up b:[]
-    extend (a:b:c:d:[]) = a:b:c:d:up b:[]
-    up = modifyOctave 1
-
+    baseOctave = 3
+    root = rootNote k baseOctave h
+    notes = root : (map (applyInterval root) is)
+    chordFrom ns = notesToChord (head ns) (tail ns)
+    rotate n xs = take (length xs) (drop n (cycle xs))
+    relocate ns = if fromEnum inv + fromEnum r > 3 then map (modifyOctave (-1)) ns else ns
 
 
 -- C Major prelude - Book one, well tempered clavier
-chordsTEMP = [
+progression :: Progression
+progression = [
+    (keyOfC, [ _I, _ii7d, _V7b, _I, _vib, _V7ofVd ]),
+    (keyOfG, [_Ib, _ii7, _V7, _I, _vio7, _iicofIV, _viio7cofIV]),
+    (keyOfC, [_Ib, _IVmaj7d, _ii7, _V7, _I, _I7, _IVmaj7, _vio7d, _viio7d, _V7, _Ic, _V7sus4, _V7, _vio7add7e, _Ic, _V7sus4, _V7, _I7])
+    ]
+  where
+    _vio7add7e = Numeral VI Nat [_m3, _d5, _d7, _m7] Fifth
+
+
+
+{-
+progressionToChords chordsTEMP = [
     [c, e, g, c', e'],    -- C:I         -- (c, [3, 5])          -- C
     [c, d, a, d', f'],    -- ii7d        -- (c, [2, 4, 6])       -- Dm/C
     [b_, d, g, b, f'],    -- V7b         -- (b_, [3, 5, 6])      -- G7/B
@@ -56,12 +80,14 @@ chordsTEMP = [
     [g__, e_, g_, c, e],  -- Ic          -- (g__, [4, 6])        -- C/G
     [g__, d_, g_, c, f],  -- V7sus4      -- (g__, [4, 5, 7])     -- G7sus4
     [g__, d_, g_, b_, f], -- V7          -- (g__, [3, 5, 7])     -- G7
-    [g__, ef_, a_, c, fs],-- vio7add7    -- (g__, [2, 4, 6f, 7#])-- Adim7/G
+    [g__, ef_, a_, c, fs],-- vio7add7    -- (g__, [2, 4, 7ff, 7f])-- Adim7/G
     [g__, e_, g_, c, g],  -- Ic          -- (g__, [4, 6])        -- C/G
     [g__, d_, g_, c, f],  -- V7sus4      -- (g__, [4, 5, 7])     -- G7sus4
     [g__, d_, g_, b_, f], -- V7          -- (g__, [3, 5, 7])     -- G7
-    [c__, c_, g_, bf_, e] -- I           -- (c__, [3, 5, 7f])    -- C7
+    [c__, c_, g_, bf_, e] -- I7          -- (c__, [3, 5, 7f])    -- C7
   ]
+-}
+
 
 coda = (
     [c__, c__, c__].>>4,
@@ -87,7 +113,7 @@ chordToParts (ba:te:trs) = (bass, tenor, treble)
 prelude = music $ map (.>>2) [ bass, tenor, treble ]
   where
     (bass, tenor, treble) = concatParts body coda
-    body = foldr (concatParts.chordToParts) ([],[],[]) chords
+    body = foldr (concatParts.chordToParts) ([],[],[]) $ progressionToChords progression
     concatParts (bs',ts',trs') (bs,ts,trs) = (bs'++bs, ts'++ts, trs'++trs)
 
 main = createMidi "test.midi" $ prelude

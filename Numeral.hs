@@ -24,6 +24,7 @@ data Inversion = First | Second | Third | Fourth | Fifth | Sixth deriving (Show,
 -- |Definition of a Roman Numeral representation of a chord
 data Numeral = Numeral Root Alter [Interval] Inversion deriving (Show, Eq)
 
+-- |Convert a numeral to a chord, given a specific Key
 numeralToChord :: Key -> Numeral -> Chord
 numeralToChord k h@(Numeral r a is inv) = chordFrom $ relocate $ rotate (fromEnum inv) notes
   where
@@ -34,6 +35,7 @@ numeralToChord k h@(Numeral r a is inv) = chordFrom $ relocate $ rotate (fromEnu
     rotate n xs = take (length xs) (drop n (cycle xs))
     relocate ns = if fromEnum inv + fromEnum r > 3 then map (modifyOctave (-1)) ns else ns
 
+-- |Get the root note of a numeral, given a specific Key
 rootNote :: Key -> Int -> Numeral -> Note
 rootNote (Key d a q) o (Numeral r al _ _) = applyInterval (Note d a o) (rootToInterval r al q)
   where
