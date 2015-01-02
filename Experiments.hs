@@ -14,11 +14,10 @@ import Numerals
 import Data.Ratio
 
 
--- Break out things into other modules
 -- Next: mechanisms for expanding chords out into parts that obey voice leading rules...
 
 
-progression = [ _I, _ii7d, _V7b, _I ]
+progression = [ _I, _ii7d, _V7b, _I, _vib, _V7ofVd ]
 
 chords :: [[Event]]
 chords = map ((map (Play (1%4))) . extend . chordToNotes . (numeralToChord keyOfC)) progression
