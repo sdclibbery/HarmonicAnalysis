@@ -22,9 +22,9 @@ progressionToChords = concatMap numeralsToChords
     numeralsToChords (k, ns) = map (numeralToChord k) ns
 
 
--- Hide Interval Data constructor and enforce good construction?
 -- Next: mechanisms for expanding chords out into parts that obey voice leading and part writing rules...
 --  Suggest a function that assigns notes to parts, and can transpose up or down by octaves
+
 
 -- C Major prelude - Book one, well tempered clavier
 progression :: Progression
