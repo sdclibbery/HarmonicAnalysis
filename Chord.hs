@@ -3,7 +3,7 @@ Module      : Chord
 Description : Definition and inspection of a chord
 -}
 module Chord (
-	Chord(..),
+	Chord,
 	intervalsToChord,
 	notesToChord,
 	chordToNotes
