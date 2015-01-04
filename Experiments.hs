@@ -22,11 +22,11 @@ progressionToChords = concatMap numeralsToChords
     numeralsToChords (k, ns) = map (numeralToChord k) ns
 
 
--- ?? No difference between V7sus4 and V7??
--- ?? Strange gaps/silences in places?
 -- Chord should have smart constructors and limited exports so it can enforce constraints: Intervals should all be normalised and sorted
 -- Numeral should have smart constructors and limited exports so it can enforce constraints: Intervals should all be normalised and sorted
 -- Next: mechanisms for expanding chords out into parts that obey voice leading and part writing rules...
+--  Suggest a function that assigns notes to parts, and can transpose up or down by octaves
+
 
 
 -- C Major prelude - Book one, well tempered clavier

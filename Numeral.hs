@@ -33,7 +33,7 @@ numeralToChord k h@(Numeral r a is inv) = chordFrom $ relocate $ rotate (fromEnu
     notes = root : (map (applyInterval root) is)
     chordFrom ns = notesToChord (head ns) (tail ns)
     rotate n xs = take (length xs) (drop n (cycle xs))
-    relocate ns = if fromEnum inv + fromEnum r > 3 then map (modifyOctave (-1)) ns else ns
+    relocate ns = map (modifyOctave (3 - (Note.octave $ head ns))) ns
 
 -- |Get the root note of a numeral, given a specific Key
 rootNote :: Key -> Int -> Numeral -> Note
