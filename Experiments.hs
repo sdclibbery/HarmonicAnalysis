@@ -16,28 +16,17 @@ import Data.Ratio
 
 type Progression = [(Key, [Numeral])]
 
-progressionToChords :: Progression -> [[Event]]
-progressionToChords p = concat $ map (\(k, ns) -> numeralsToChords k ns) p
+progressionToChords :: Progression -> [Chord]
+progressionToChords = concatMap numeralsToChords
   where
-    extend (a:b:c:[]) = a:b:c:up b:up a:[]
-    extend (a:b:c:d:[]) = a:b:c:d:up b:[]
-    extend (a:b:c:d:e:[]) = a:b:c:d:e:[]
-    up = modifyOctave 1
-    numeralsToChords k ns = map ((map (Play (1%4))) . extend . chordToNotes . (numeralToChord k)) ns
+    numeralsToChords (k, ns) = map (numeralToChord k) ns
 
 
-
--- Next: mechanisms for expanding chords out into parts that obey voice leading rules...
-
-
-numeralToChordT k h@(Numeral r a is inv) = chordFrom $ relocate $ rotate (fromEnum inv) notes
-  where
-    baseOctave = 3
-    root = rootNote k baseOctave h
-    notes = root : (map (applyInterval root) is)
-    chordFrom ns = notesToChord (head ns) (tail ns)
-    rotate n xs = take (length xs) (drop n (cycle xs))
-    relocate ns = if fromEnum inv + fromEnum r > 3 then map (modifyOctave (-1)) ns else ns
+-- ?? No difference between V7sus4 and V7??
+-- ?? Strange gaps/silences in places?
+-- Chord should have smart constructors and limited exports so it can enforce constraints: Intervals should all be normalised and sorted
+-- Numeral should have smart constructors and limited exports so it can enforce constraints: Intervals should all be normalised and sorted
+-- Next: mechanisms for expanding chords out into parts that obey voice leading and part writing rules...
 
 
 -- C Major prelude - Book one, well tempered clavier
@@ -48,46 +37,7 @@ progression = [
     (keyOfC, [_Ib, _IVmaj7d, _ii7, _V7, _I, _I7, _IVmaj7, _vio7d, _viio7d, _V7, _Ic, _V7sus4, _V7, _vio7add7e, _Ic, _V7sus4, _V7, _I7])
     ]
   where
-    _vio7add7e = Numeral VI Nat [_m3, _d5, _d7, _m7] Fifth
-
-
-
-{-
-progressionToChords chordsTEMP = [
-    [c, e, g, c', e'],    -- C:I         -- (c, [3, 5])          -- C
-    [c, d, a, d', f'],    -- ii7d        -- (c, [2, 4, 6])       -- Dm/C
-    [b_, d, g, b, f'],    -- V7b         -- (b_, [3, 5, 6])      -- G7/B
-    [c, e, g, c', e'],    -- I           -- (c, [3, 5])          -- C
-    [c, e, a, e', a'],    -- vib         -- (c, [3, 6])          -- Am/C
-    [c, d, fs, a, d'],    -- V7/Vd       -- (c, [2, 4#, 6])      -- D/C
-    [b_, d, g, d', g'],   -- G:Ib        -- (b_, [3, 6])         -- G/B
-    [a_, c, e, g, c'],    -- ii7         -- (a_, [3, 5, 7])      -- Am7
-    [d_, a_, d, fs, c'],  -- V7          -- (d_, [3, 5, 7])      -- D7
-    [g_, b_, d, g, b],    -- I           -- (g_, [3, 5])         -- G
-    [g_, bf_, e, g, cs'], -- vio7        -- (g_, [3b, 4s, 6])    -- Edim7
-    [f_, a_, d, a, d'],   -- iic/IV      -- (f_, [3, 6])         -- Dm/F
-    [f_, af_, d, f, b],   -- viio7c/IV   -- (f_, [3b, 4, 6])     -- Bdim7/F
-    [e_, g_, c, g, c'],   -- C:Ib        -- (e_, [3, 6])         -- C/E
-    [e_, f_, a_, c, f],   -- IVmaj7d     -- (e_, [2, 4, 6])      -- F/E
-    [d_, f_, a_, c, f],   -- ii7         -- (d_, [3, 5, 7])      -- Dm7
-    [g__, d_, g_, b_, f], -- V7          -- (g__, [3, 5, 7])     -- G7
-    [c_, e_, g_, c, e],   -- I           -- (c_, [3, 5])         -- C
-    [c_, g_, bf_, c, e],  -- I7          -- (c_, [3, 5, 7b])     -- C7
-    [f__, f_, a_, c, e],  -- IVmaj7      -- (f__, [3, 5, 7])     -- Fmaj7
-    [fs__, c_, a_, c, ef],-- vio7d       -- (fs__, [3, 5, 7b])   -- Adim7/F#
-    [af__, f_, b_, c, d], -- viio7d      -- (af__, [2, 3, 4, 6]) -- Bdim7/Ab
-    [g__, f_, g_, b_, d], -- V7          -- (g__, [3, 5, 7])     -- G7
-    [g__, e_, g_, c, e],  -- Ic          -- (g__, [4, 6])        -- C/G
-    [g__, d_, g_, c, f],  -- V7sus4      -- (g__, [4, 5, 7])     -- G7sus4
-    [g__, d_, g_, b_, f], -- V7          -- (g__, [3, 5, 7])     -- G7
-    [g__, ef_, a_, c, fs],-- vio7add7    -- (g__, [2, 4, 7ff, 7f])-- Adim7/G
-    [g__, e_, g_, c, g],  -- Ic          -- (g__, [4, 6])        -- C/G
-    [g__, d_, g_, c, f],  -- V7sus4      -- (g__, [4, 5, 7])     -- G7sus4
-    [g__, d_, g_, b_, f], -- V7          -- (g__, [3, 5, 7])     -- G7
-    [c__, c_, g_, bf_, e] -- I7          -- (c__, [3, 5, 7f])    -- C7
-  ]
--}
-
+    _vio7add7e = Numeral VI Nat [_m3, _d5, _M6, _m7] Fifth
 
 coda = (
     [c__, c__, c__].>>4,
@@ -110,11 +60,18 @@ chordToParts (ba:te:trs) = (bass, tenor, treble)
     tenor = twice [r.<4, te.>7.<4]
     treble = twice (r.<2 : twice (trs.<<4))
 
+extendTo5Notes :: [Note] -> [Note]
+extendTo5Notes (a:b:c:[]) = a:b:c:up a:up b:[]
+extendTo5Notes (a:b:c:d:[]) = a:b:c:d:up a:[]
+extendTo5Notes (a:b:c:d:e:[]) = a:b:c:d:e:[]
+up = modifyOctave 1
+
 prelude = music $ map (.>>2) [ bass, tenor, treble ]
   where
     (bass, tenor, treble) = concatParts body coda
-    body = foldr (concatParts.chordToParts) ([],[],[]) $ progressionToChords progression
+    body = foldr (concatParts.chordToParts) ([],[],[]) $ map (map qn . extendTo5Notes . chordToNotes) $ progressionToChords progression
     concatParts (bs',ts',trs') (bs,ts,trs) = (bs'++bs, ts'++ts, trs'++trs)
+
 
 main = createMidi "test.midi" $ prelude
 

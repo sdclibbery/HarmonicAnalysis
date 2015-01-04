@@ -15,6 +15,7 @@ module Note (
   absDiatonic
 ) where
 
+
 -- |Note alteration: sharpening or flattening
 data Alter = DFl | Fl | Nat | Sh | DSh deriving (Eq, Ord, Show, Enum)
 
