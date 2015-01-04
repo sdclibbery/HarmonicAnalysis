@@ -5,7 +5,8 @@ Description : Definition and inspection of a chord as represented by a roman num
 module Numeral (
 	Root(..),
 	Inversion(..),
-	Numeral(..),
+	Numeral,
+    numeral,
 	numeralToChord,
 	rootNote
 ) where
@@ -14,6 +15,8 @@ import Note
 import Interval
 import Intervals
 import Chord
+import Data.List
+import Data.Ord
 
 -- |Root of a chord
 data Root = I | II | III | IV | V | VI | VII deriving (Show, Eq, Ord, Enum)
@@ -23,6 +26,12 @@ data Inversion = First | Second | Third | Fourth | Fifth | Sixth deriving (Show,
 
 -- |Definition of a Roman Numeral representation of a chord
 data Numeral = Numeral Root Alter [Interval] Inversion deriving (Show, Eq)
+
+-- |Construct a Numeral value, making sure that the intervals are normalised and sorted
+numeral :: Root -> Alter -> [Interval] -> Inversion -> Numeral
+numeral r a is inv = Numeral r a is' inv
+  where
+    is' = sortBy (comparing chr) $ map normalise is
 
 -- |Convert a numeral to a chord, given a specific Key
 numeralToChord :: Key -> Numeral -> Chord

@@ -22,11 +22,9 @@ progressionToChords = concatMap numeralsToChords
     numeralsToChords (k, ns) = map (numeralToChord k) ns
 
 
--- Numeral should have smart constructors and limited exports so it can enforce constraints: Intervals should all be normalised and sorted
+-- Hide Interval Data constructor and enforce good construction?
 -- Next: mechanisms for expanding chords out into parts that obey voice leading and part writing rules...
 --  Suggest a function that assigns notes to parts, and can transpose up or down by octaves
-
-
 
 -- C Major prelude - Book one, well tempered clavier
 progression :: Progression
@@ -36,7 +34,7 @@ progression = [
     (keyOfC, [_Ib, _IVmaj7d, _ii7, _V7, _I, _I7, _IVmaj7, _vio7d, _viio7d, _V7, _Ic, _V7sus4, _V7, _vio7add7e, _Ic, _V7sus4, _V7, _I7])
     ]
   where
-    _vio7add7e = Numeral VI Nat [_m3, _d5, _M6, _m7] Fifth
+    _vio7add7e = numeral VI Nat [_m3, _d5, _M6, _m7] Fifth
 
 coda = (
     [c__, c__, c__].>>4,
