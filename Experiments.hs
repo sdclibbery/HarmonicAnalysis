@@ -32,9 +32,9 @@ twice :: [a] -> [a]
 twice xs = xs ++ xs
 
 
--- Next: mechanisms for expanding chords out into parts that obey voice leading and part writing rules...
---  NotesToParts should reassign notes to parts, transposing up or down by octaves as needed, to achieve good voice leading and part writing
-
+-- NotesToParts should reassign notes to parts, transposing up or down by octaves as needed, to achieve good voice leading and part writing
+-- Consider adding a level of abstraction on top of Numerals: chord functions. Specify a progression functionally and render down to Numerals
+-- Melody: how to drive harmony from melody
 
 -- C Major prelude - Book one, well tempered clavier
 progression :: Progression
