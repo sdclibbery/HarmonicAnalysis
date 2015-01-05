@@ -22,8 +22,18 @@ progressionToChords = concatMap numeralsToChords
     numeralsToChords (k, ns) = map (numeralToChord k) ns
 
 
+type Parts = ([Event], [Event], [Event])
+
+concatParts :: Parts -> Parts -> Parts
+concatParts (b, t, tr) (b', t', tr') = (b++b', t++t', tr++tr')
+
+
+twice :: [a] -> [a]
+twice xs = xs ++ xs
+
+
 -- Next: mechanisms for expanding chords out into parts that obey voice leading and part writing rules...
---  Suggest a function that assigns notes to parts, and can transpose up or down by octaves
+--  NotesToParts should reassign notes to parts, transposing up or down by octaves as needed, to achieve good voice leading and part writing
 
 
 -- C Major prelude - Book one, well tempered clavier
@@ -42,16 +52,11 @@ coda = (
     [r.>2, f_, a_, c, f, c_, a_, c_, a_, f_, a_, f_, d_, f_, d_, r.>2, g, b, d', f', d', b, d', b, g, b, d, f, e, d].<<4 ++ [c'.>4]
   )
 
-twice :: [a] -> [a]
-twice xs = xs ++ xs
+notesToParts :: [Event] -> Parts
+notesToParts (ba:te:trs) = ([ba], [te], trs)
 
-type Parts = ([Event], [Event], [Event])
-
-concatParts :: Parts -> Parts -> Parts
-concatParts (b, t, tr) (b', t', tr') = (b++b', t++t', tr++tr')
-
-chordToParts :: [Event] -> Parts
-chordToParts (ba:te:trs) = (bass, tenor, treble)
+arpeggiateParts :: Parts -> Parts
+arpeggiateParts ([ba],[te],trs) = (bass, tenor, treble)
   where
     bass = twice [ba.>2]
     tenor = twice [r.<4, te.>7.<4]
@@ -66,7 +71,7 @@ up = modifyOctave 1
 prelude = music $ map (.>>2) [ bass, tenor, treble ]
   where
     (bass, tenor, treble) = concatParts body coda
-    body = foldr (concatParts.chordToParts) ([],[],[]) $ map (map qn . extendTo5Notes . chordToNotes) $ progressionToChords progression
+    body = foldr (concatParts.arpeggiateParts.notesToParts) ([],[],[]) $ map (map qn . extendTo5Notes . chordToNotes) $ progressionToChords progression
     concatParts (bs',ts',trs') (bs,ts,trs) = (bs'++bs, ts'++ts, trs'++trs)
 
 
