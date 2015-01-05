@@ -7,7 +7,8 @@ module Report (
   Ref(..),
   Source(..),
   Message,
-  Report(..)
+  Report(..),
+  startTime
 ) where
 import Structure
 
@@ -23,3 +24,7 @@ data Source = Source { parts :: [PartName], start :: Time, end :: Time } derivin
 -- |The message report
 type Message = String
 
+-- |Get the start time of a report
+startTime :: Report -> Time
+startTime (Warning _ s _) = start s
+startTime (Error _ s _) = start s

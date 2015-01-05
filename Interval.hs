@@ -78,7 +78,8 @@ quality (Interval 6 10 0) = Minor
 quality (Interval 6 11 0) = Major
 quality (Interval 6 12 0) = Augmented
 quality (Interval d c o) | d < 0 = quality (Interval (-d) (-c) (-o))
-quality (Interval d c o) | o > 0 = quality (Interval (d `mod` 7) (c `mod` 12) (o-1))
+quality (Interval d c o) | d > 6 || o > 0 = quality (Interval (d `mod` 7) (c `mod` 12) 0)
+quality (Interval d c o) = error $ "quality: Invalid interval: dia: " ++ (show d) ++ " chr: " ++ (show c) ++ " oct: " ++ (show o)
 
 -- |Normalise an interval so it is within an octave
 normalise :: Interval -> Interval

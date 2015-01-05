@@ -6,12 +6,15 @@ import Notes
 import Midi
 import Harmony
 import Melody
+import Report
 import Key
 import Keys
 import Chord
 import Numeral
 import Numerals
 import Data.Ratio
+import Data.List
+import Data.Ord
 
 
 type Progression = [(Key, [Numeral])]
@@ -32,7 +35,9 @@ twice :: [a] -> [a]
 twice xs = xs ++ xs
 
 
+-- Sort out the analysis. Suggest we define new sets of clearer rules :-)
 -- NotesToParts should reassign notes to parts, transposing up or down by octaves as needed, to achieve good voice leading and part writing
+--   Start by transposing the bass to be as close to the previous note as possible
 -- Consider adding a level of abstraction on top of Numerals: chord functions. Specify a progression functionally and render down to Numerals
 -- Melody: how to drive harmony from melody
 
@@ -53,7 +58,7 @@ coda = (
   )
 
 notesToParts :: [Event] -> Parts
-notesToParts (ba:te:trs) = ([ba], [te], trs)
+notesToParts (ba:ns) = ([ba], [head ns], tail ns)
 
 arpeggiateParts :: Parts -> Parts
 arpeggiateParts ([ba],[te],trs) = (bass, tenor, treble)
@@ -71,16 +76,19 @@ up = modifyOctave 1
 prelude = music $ map (.>>2) [ bass, tenor, treble ]
   where
     (bass, tenor, treble) = concatParts body coda
-    body = foldr (concatParts.arpeggiateParts.notesToParts) ([],[],[]) $ map (map qn . extendTo5Notes . chordToNotes) $ progressionToChords progression
     concatParts (bs',ts',trs') (bs,ts,trs) = (bs'++bs, ts'++ts, trs'++trs)
+    progressionNotes = map (map qn . extendTo5Notes . chordToNotes) $ progressionToChords progression
+    body = foldr (concatParts . arpeggiateParts . notesToParts) ([],[],[]) progressionNotes
 
 
-main = createMidi "test.midi" $ prelude
 
---main = putStrLn $ show $ Melody.analyse prelude
+outputMidi = createMidi "test.midi" $ prelude
 
+performAnalysis = putStrLn $ pretty reports
+  where
+    reports = sortBy (comparing startTime) $ Melody.analyse prelude ++ Harmony.analyse prelude
+    pretty rs = intercalate "\n" $ map show rs
 
---main = createMidi "test.midi" $ music [ [c, d].>>2, [e, f].>>2, [g, a].>>2 ]
---main = createMidi "test.midi" $ music [ [c, d, g, a, c', r, b, a, g, f, d, b_, c.>4] ]
-
-
+main = do
+  performAnalysis
+  outputMidi
