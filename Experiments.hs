@@ -15,6 +15,7 @@ import Numerals
 import Data.Ratio
 import Data.List
 import Data.Ord
+import Prelude hiding ((^), (/))
 
 
 type Progression = [(Key, [Numeral])]
@@ -34,7 +35,6 @@ concatParts (b, t, tr) (b', t', tr') = (b++b', t++t', tr++tr')
 twice :: [a] -> [a]
 twice xs = xs ++ xs
 
-
 -- Sort out the analysis. Suggest we define new sets of clearer rules :-)
 -- NotesToParts should reassign notes to parts, transposing up or down by octaves as needed, to achieve good voice leading and part writing
 --   Start by transposing the bass to be as close to the previous note as possible
@@ -44,12 +44,12 @@ twice xs = xs ++ xs
 -- C Major prelude - Book one, well tempered clavier
 progression :: Progression
 progression = [
-    (keyOfC, [ _I, _ii7d, _V7b, _I, _vib, _V7ofVd ]),
-    (keyOfG, [_Ib, _ii7, _V7, _I, _vio7, _iicofIV, _viio7cofIV]),
-    (keyOfC, [_Ib, _IVmaj7d, _ii7, _V7, _I, _I7, _IVmaj7, _vio7d, _viio7d, _V7, _Ic, _V7sus4, _V7, _vio7add7e, _Ic, _V7sus4, _V7, _I7])
+    (keyOfC, [ _I, _ii7^_d, _V7^_b, _I, _vi^_b, _V7^_d/V ]),
+    (keyOfG, [ _I^_b, _ii7, _V7, _I, _vio7, _ii^_c/IV, _viio7^_c/IV ]),
+    (keyOfC, [ _I^_b, _IVmaj7^_d, _ii7, _V7, _I, _I7, _IVmaj7, _vio7^ _d, _viio7^_d, _V7, _I^_c, _V7sus4, _V7, _vio7add7^_e, _I^_c, _V7sus4, _V7, _I7 ])
     ]
   where
-    _vio7add7e = numeral VI Nat [_m3, _d5, _M6, _m7] Fifth
+    _vio7add7 = numeral VI Nat [_m3, _d5, _M6, _m7] First
 
 coda = (
     [c__, c__, c__].>>4,

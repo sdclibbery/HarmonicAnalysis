@@ -5,10 +5,14 @@ Description : Definition and inspection of a chord as represented by a roman num
 module Numeral (
 	Root(..),
 	Inversion(..),
+    _a, _b, _c, _d, _e, _f,
 	Numeral,
     numeral,
 	numeralToChord,
-	rootNote
+	rootNote,
+    (^),
+    (/),
+    add
 ) where
 import Key
 import Note
@@ -17,6 +21,7 @@ import Intervals
 import Chord
 import Data.List
 import Data.Ord
+import Prelude hiding ((^), (/))
 
 -- |Root of a chord
 data Root = I | II | III | IV | V | VI | VII deriving (Show, Eq, Ord, Enum)
@@ -24,14 +29,24 @@ data Root = I | II | III | IV | V | VI | VII deriving (Show, Eq, Ord, Enum)
 -- |Chord inversion
 data Inversion = First | Second | Third | Fourth | Fifth | Sixth deriving (Show, Eq, Ord, Enum)
 
+-- |Handy short versions for inversions
+_a, _b, _c, _d, _e, _f :: Inversion
+_a = First
+_b = Second
+_c = Third
+_d = Fourth
+_e = Fifth
+_f = Sixth
+
 -- |Definition of a Roman Numeral representation of a chord
 data Numeral = Numeral Root Alter [Interval] Inversion deriving (Show, Eq)
 
 -- |Construct a Numeral value, making sure that the intervals are normalised and sorted
 numeral :: Root -> Alter -> [Interval] -> Inversion -> Numeral
-numeral r a is inv = Numeral r a is' inv
-  where
-    is' = sortBy (comparing chr) $ map normalise is
+numeral r a is inv = Numeral r a (validate is) inv
+
+validate :: [Interval] -> [Interval]
+validate = sortBy (comparing chr) . map normalise
 
 -- |Convert a numeral to a chord, given a specific Key
 numeralToChord :: Key -> Numeral -> Chord
@@ -91,3 +106,14 @@ rootNote (Key d a q) o (Numeral r al _ _) = applyInterval (Note d a o) (rootToIn
     rootToInterval VII Nat KeyMinor = _m7
     rootToInterval VII Sh KeyMinor = _M7
 
+-- |Set the inversion of a Numeral; eg _I^_b is the first inversion of the tonic. Eg, in C Major, it has the E in the bass
+(^) :: Numeral -> Inversion -> Numeral
+(^) (Numeral r a is _) inv = Numeral r a is inv
+
+-- |Make the Numeral into a secondary; eg _V./V is a V of V secondary dominant
+(/) :: Numeral -> Root -> Numeral
+(/) (Numeral r a is i) root = Numeral (toEnum((fromEnum r + fromEnum root)`mod`7)) a is i
+
+-- |Add a note into a numeral. Eg _I+_M9 would be a tonic triad with an added major ninth
+add :: Numeral -> Interval -> Numeral
+add (Numeral r a is i) int = Numeral r a (validate (is ++ [int])) i
