@@ -34,6 +34,7 @@ concatParts (b, t, tr) (b', t', tr') = (b++b', t++t', tr++tr')
 twice :: [a] -> [a]
 twice xs = xs ++ xs
 
+-- Change Numeral roots to include flats/sharps
 -- Sort out the analysis. Suggest we define new sets of clearer rules :-)
 -- NotesToParts should reassign notes to parts, transposing up or down by octaves as needed, to achieve good voice leading and part writing
 --   Start by transposing the bass to be as close to the previous note as possible
@@ -48,7 +49,7 @@ progression = [
     (keyOfC, [ _I^b, _IVmaj7^d, _ii7, _V7, _I, _I7, _IVmaj7, _vio7^d, _viio7^d, _V7, _I^c, _V7sus4, _V7, _vio7add7^e, _I^c, _V7sus4, _V7, _I7 ])
     ]
   where
-    _vio7add7 = numeral VI Nat [_m3, _d5, _M6, _m7] First
+    _vio7add7 = numeral VI [_m3, _d5, _M6, _m7] First
     (^) = (.^)
     (/) = (./)
     b = _b

@@ -5,14 +5,13 @@ Description : Definition and inspection of a chord as represented by a roman num
 module Numeral (
 	Root(..),
 	Inversion(..),
-    _a, _b, _c, _d, _e, _f,
 	Numeral,
     numeral,
 	numeralToChord,
 	rootNote,
-    (.^),
-    (./),
-    add
+    (.^), (./), add,
+    (#), (♭),
+    _a, _b, _c, _d, _e, _f
 ) where
 import Key
 import Note
@@ -23,33 +22,21 @@ import Data.List
 import Data.Ord
 
 -- |Root of a chord
-data Root = I | II | III | IV | V | VI | VII deriving (Show, Eq, Ord, Enum)
+data Root = FlI | I | ShI | FlII | II | ShII | FlIII | III | ShIII | FlIV | IV | ShIV | FlV | V | ShV | FlVI | VI | ShVI | FlVII | VII | ShVII deriving (Show, Eq, Ord, Enum)
 
 -- |Chord inversion
 data Inversion = First | Second | Third | Fourth | Fifth | Sixth deriving (Show, Eq, Ord, Enum)
 
--- |Handy short versions for inversions
-_a, _b, _c, _d, _e, _f :: Inversion
-_a = First
-_b = Second
-_c = Third
-_d = Fourth
-_e = Fifth
-_f = Sixth
-
 -- |Definition of a Roman Numeral representation of a chord
-data Numeral = Numeral Root Alter [Interval] Inversion deriving (Show, Eq)
+data Numeral = Numeral Root [Interval] Inversion deriving (Show, Eq)
 
 -- |Construct a Numeral value, making sure that the intervals are normalised and sorted
-numeral :: Root -> Alter -> [Interval] -> Inversion -> Numeral
-numeral r a is inv = Numeral r a (validate is) inv
-
-validate :: [Interval] -> [Interval]
-validate = sortBy (comparing chr) . map normalise
+numeral :: Root -> [Interval] -> Inversion -> Numeral
+numeral r is inv = Numeral r (validate is) inv
 
 -- |Convert a numeral to a chord, given a specific Key
 numeralToChord :: Key -> Numeral -> Chord
-numeralToChord k h@(Numeral r a is inv) = chordFrom $ relocate $ rotate (fromEnum inv) notes
+numeralToChord k h@(Numeral r is inv) = chordFrom $ relocate $ rotate (fromEnum inv) notes
   where
     baseOctave = 3
     root = rootNote k baseOctave h
@@ -60,59 +47,93 @@ numeralToChord k h@(Numeral r a is inv) = chordFrom $ relocate $ rotate (fromEnu
 
 -- |Get the root note of a numeral, given a specific Key
 rootNote :: Key -> Int -> Numeral -> Note
-rootNote (Key d a q) o (Numeral r al _ _) = applyInterval (Note d a o) (rootToInterval r al q)
+rootNote (Key d a q) o (Numeral r _ _) = applyInterval (Note d a o) (rootToInterval r q)
   where
-    rootToInterval I Fl KeyMajor = _d1
-    rootToInterval I Nat KeyMajor = _P1
-    rootToInterval I Sh KeyMajor = _a1
-    rootToInterval II Fl KeyMajor = _m2
-    rootToInterval II Nat KeyMajor = _M2
-    rootToInterval II Sh KeyMajor = _a2
-    rootToInterval III Fl KeyMajor = _m3
-    rootToInterval III Nat KeyMajor = _M3
-    rootToInterval III Sh KeyMajor = _a3
-    rootToInterval IV Fl KeyMajor = _d4
-    rootToInterval IV Nat KeyMajor = _P4
-    rootToInterval IV Sh KeyMajor = _a4
-    rootToInterval V Fl KeyMajor = _d5
-    rootToInterval V Nat KeyMajor = _P5
-    rootToInterval V Sh KeyMajor = _a5
-    rootToInterval VI Fl KeyMajor = _m6
-    rootToInterval VI Nat KeyMajor = _M6
-    rootToInterval VI Sh KeyMajor = _a6
-    rootToInterval VII Fl KeyMajor = _m7
-    rootToInterval VII Nat KeyMajor = _M7
-    rootToInterval VII Sh KeyMajor = _a7
-    rootToInterval I Fl KeyMinor = _d1
-    rootToInterval I Nat KeyMinor = _P1
-    rootToInterval I Sh KeyMinor = _a1
-    rootToInterval II Fl KeyMinor = _m2
-    rootToInterval II Nat KeyMinor = _M2
-    rootToInterval II Sh KeyMinor = _a2
-    rootToInterval III Fl KeyMinor = _m3
-    rootToInterval III Nat KeyMinor = _M3
-    rootToInterval III Sh KeyMinor = _a3
-    rootToInterval IV Fl KeyMinor = _d4
-    rootToInterval IV Nat KeyMinor = _P4
-    rootToInterval IV Sh KeyMinor = _a4
-    rootToInterval V Fl KeyMinor = _d5
-    rootToInterval V Nat KeyMinor = _P5
-    rootToInterval V Sh KeyMinor = _a5
-    rootToInterval VI Fl KeyMinor = _d6
-    rootToInterval VI Nat KeyMinor = _m6
-    rootToInterval VI Sh KeyMinor = _M6
-    rootToInterval VII Fl KeyMinor = _d7
-    rootToInterval VII Nat KeyMinor = _m7
-    rootToInterval VII Sh KeyMinor = _M7
+    rootToInterval FlI KeyMajor = _d1
+    rootToInterval I KeyMajor = _P1
+    rootToInterval ShI KeyMajor = _a1
+    rootToInterval FlII KeyMajor = _m2
+    rootToInterval II KeyMajor = _M2
+    rootToInterval ShII KeyMajor = _a2
+    rootToInterval FlIII KeyMajor = _m3
+    rootToInterval III KeyMajor = _M3
+    rootToInterval ShIII KeyMajor = _a3
+    rootToInterval FlIV KeyMajor = _d4
+    rootToInterval IV KeyMajor = _P4
+    rootToInterval ShIV KeyMajor = _a4
+    rootToInterval FlV KeyMajor = _d5
+    rootToInterval V KeyMajor = _P5
+    rootToInterval ShV KeyMajor = _a5
+    rootToInterval FlVI KeyMajor = _m6
+    rootToInterval VI KeyMajor = _M6
+    rootToInterval ShVI KeyMajor = _a6
+    rootToInterval FlVII KeyMajor = _m7
+    rootToInterval VII KeyMajor = _M7
+    rootToInterval ShVII KeyMajor = _a7
+    rootToInterval FlI KeyMinor = _d1
+    rootToInterval I KeyMinor = _P1
+    rootToInterval ShI KeyMinor = _a1
+    rootToInterval FlII KeyMinor = _m2
+    rootToInterval II KeyMinor = _M2
+    rootToInterval ShII KeyMinor = _a2
+    rootToInterval FlIII KeyMinor = _m3
+    rootToInterval III KeyMinor = _M3
+    rootToInterval ShIII KeyMinor = _a3
+    rootToInterval FlIV KeyMinor = _d4
+    rootToInterval IV KeyMinor = _P4
+    rootToInterval ShIV KeyMinor = _a4
+    rootToInterval FlV KeyMinor = _d5
+    rootToInterval V KeyMinor = _P5
+    rootToInterval ShV KeyMinor = _a5
+    rootToInterval FlVI KeyMinor = _d6
+    rootToInterval VI KeyMinor = _m6
+    rootToInterval ShVI KeyMinor = _M6
+    rootToInterval FlVII KeyMinor = _d7
+    rootToInterval VII KeyMinor = _m7
+    rootToInterval ShVII KeyMinor = _M7
 
 -- |Set the inversion of a Numeral; eg _I^_b is the first inversion of the tonic. Eg, in C Major, it has the E in the bass
 (.^) :: Numeral -> Inversion -> Numeral
-(.^) (Numeral r a is _) inv = Numeral r a is inv
+(.^) (Numeral r is _) inv = Numeral r is inv
 
 -- |Make the Numeral into a secondary; eg _V./V is a V of V secondary dominant
 (./) :: Numeral -> Root -> Numeral
-(./) (Numeral r a is i) root = Numeral (toEnum((fromEnum r + fromEnum root)`mod`7)) a is i
+(./) (Numeral r is i) root = Numeral (toEnum((fromEnum r + fromEnum root)`mod`7)) is i
 
 -- |Add a note into a numeral. Eg _I+_M9 would be a tonic triad with an added major ninth
 add :: Numeral -> Interval -> Numeral
-add (Numeral r a is i) int = Numeral r a (validate (is ++ [int])) i
+add (Numeral r is i) int = Numeral r (validate (is ++ [int])) i
+
+-- |Sharpen a root
+(#) :: Root -> Root
+(#) I = ShI
+(#) II = ShII
+(#) III = ShIII
+(#) IV = ShIV
+(#) V = ShV
+(#) VI = ShVI
+(#) VII = ShVII
+
+-- |Flatten a root
+(♭) :: Root -> Root
+(♭) I = FlI
+(♭) II = FlII
+(♭) III = FlIII
+(♭) IV = FlIV
+(♭) V = FlV
+(♭) VI = FlVI
+(♭) VII = FlVII
+
+-- |Handy short versions for inversions
+_a, _b, _c, _d, _e, _f :: Inversion
+_a = First
+_b = Second
+_c = Third
+_d = Fourth
+_e = Fifth
+_f = Sixth
+
+-- Helper to validate (normalise and sort) a list of intervals
+validate :: [Interval] -> [Interval]
+validate = sortBy (comparing chr) . map normalise
+
