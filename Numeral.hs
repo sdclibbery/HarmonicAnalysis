@@ -10,8 +10,8 @@ module Numeral (
     numeral,
 	numeralToChord,
 	rootNote,
-    (^),
-    (/),
+    (.^),
+    (./),
     add
 ) where
 import Key
@@ -21,7 +21,6 @@ import Intervals
 import Chord
 import Data.List
 import Data.Ord
-import Prelude hiding ((^), (/))
 
 -- |Root of a chord
 data Root = I | II | III | IV | V | VI | VII deriving (Show, Eq, Ord, Enum)
@@ -107,12 +106,12 @@ rootNote (Key d a q) o (Numeral r al _ _) = applyInterval (Note d a o) (rootToIn
     rootToInterval VII Sh KeyMinor = _M7
 
 -- |Set the inversion of a Numeral; eg _I^_b is the first inversion of the tonic. Eg, in C Major, it has the E in the bass
-(^) :: Numeral -> Inversion -> Numeral
-(^) (Numeral r a is _) inv = Numeral r a is inv
+(.^) :: Numeral -> Inversion -> Numeral
+(.^) (Numeral r a is _) inv = Numeral r a is inv
 
 -- |Make the Numeral into a secondary; eg _V./V is a V of V secondary dominant
-(/) :: Numeral -> Root -> Numeral
-(/) (Numeral r a is i) root = Numeral (toEnum((fromEnum r + fromEnum root)`mod`7)) a is i
+(./) :: Numeral -> Root -> Numeral
+(./) (Numeral r a is i) root = Numeral (toEnum((fromEnum r + fromEnum root)`mod`7)) a is i
 
 -- |Add a note into a numeral. Eg _I+_M9 would be a tonic triad with an added major ninth
 add :: Numeral -> Interval -> Numeral

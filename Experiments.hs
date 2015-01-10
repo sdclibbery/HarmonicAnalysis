@@ -15,7 +15,6 @@ import Numerals
 import Data.Ratio
 import Data.List
 import Data.Ord
-import Prelude hiding ((^), (/))
 
 
 type Progression = [(Key, [Numeral])]
@@ -44,12 +43,18 @@ twice xs = xs ++ xs
 -- C Major prelude - Book one, well tempered clavier
 progression :: Progression
 progression = [
-    (keyOfC, [ _I, _ii7^_d, _V7^_b, _I, _vi^_b, _V7^_d/V ]),
-    (keyOfG, [ _I^_b, _ii7, _V7, _I, _vio7, _ii^_c/IV, _viio7^_c/IV ]),
-    (keyOfC, [ _I^_b, _IVmaj7^_d, _ii7, _V7, _I, _I7, _IVmaj7, _vio7^ _d, _viio7^_d, _V7, _I^_c, _V7sus4, _V7, _vio7add7^_e, _I^_c, _V7sus4, _V7, _I7 ])
+    (keyOfC, [ _I, _ii7^d, _V7^b, _I, _vi^b, _V7^d/V ]),
+    (keyOfG, [ _I^b, _ii7, _V7, _I, _vio7, _ii^c/IV, _viio7^c/IV ]),
+    (keyOfC, [ _I^b, _IVmaj7^d, _ii7, _V7, _I, _I7, _IVmaj7, _vio7^d, _viio7^d, _V7, _I^c, _V7sus4, _V7, _vio7add7^e, _I^c, _V7sus4, _V7, _I7 ])
     ]
   where
     _vio7add7 = numeral VI Nat [_m3, _d5, _M6, _m7] First
+    (^) = (.^)
+    (/) = (./)
+    b = _b
+    c = _c
+    d = _d
+    e = _e
 
 coda = (
     [c__, c__, c__].>>4,
