@@ -34,12 +34,21 @@ concatParts (b, t, tr) (b', t', tr') = (b++b', t++t', tr++tr')
 twice :: [a] -> [a]
 twice xs = xs ++ xs
 
--- Change Numeral roots to include flats/sharps
+
+
+type Vertical = [Note]
+
+voiceLead :: [Vertical] -> [Vertical]
+voiceLead vs = vs
+
+
+
+-- !New voice leading module...
 -- Sort out the analysis. Suggest we define new sets of clearer rules :-)
 -- NotesToParts should reassign notes to parts, transposing up or down by octaves as needed, to achieve good voice leading and part writing
 --   Start by transposing the bass to be as close to the previous note as possible
+-- Experiment with arpeggiation
 -- Consider adding a level of abstraction on top of Numerals: chord functions. Specify a progression functionally and render down to Numerals
--- Melody: how to drive harmony from melody
 
 -- C Major prelude - Book one, well tempered clavier
 progression :: Progression
@@ -83,8 +92,8 @@ prelude = music $ map (.>>2) [ bass, tenor, treble ]
   where
     (bass, tenor, treble) = concatParts body coda
     concatParts (bs',ts',trs') (bs,ts,trs) = (bs'++bs, ts'++ts, trs'++trs)
-    progressionNotes = map (map qn . extendTo5Notes . chordToNotes) $ progressionToChords progression
-    body = foldr (concatParts . arpeggiateParts . notesToParts) ([],[],[]) progressionNotes
+    progressionNotes = map (extendTo5Notes . chordToNotes) $ progressionToChords progression
+    body = foldr (concatParts . arpeggiateParts . notesToParts . map qn) ([],[],[]) $ voiceLead progressionNotes
 
 
 
