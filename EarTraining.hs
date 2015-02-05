@@ -22,6 +22,11 @@ import System.Random
 
 -- ...
 
+scale = [c, d, e, f, g, a, b, c'] .<< 4
+
+
+notes1 = concat $ replicate 5 $ scale ++ [rw]
+
 
 main = do
-	createMidi "eartraining1.midi" $ music [[c, d, e, f, g, a, b]]
+	createMidi "eartraining1.midi" $ music [notes1]

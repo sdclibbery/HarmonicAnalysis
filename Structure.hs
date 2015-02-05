@@ -14,7 +14,7 @@ module Structure (
   (.<),
   (.<<),
   music,
-  r, rh, re,
+  rw, r, rh, re,
   qn
 ) where
 import Note
@@ -68,6 +68,7 @@ music ess
     makePart (n, es) = Part n es
 
 -- |Shorthand for a one beat (one quarter note) rest
+rw = Rest (1)
 r = Rest (1%4)
 rh = Rest (1%2)
 re = Rest (1%8)
