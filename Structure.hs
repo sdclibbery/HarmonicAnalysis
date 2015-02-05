@@ -15,7 +15,7 @@ module Structure (
   (.<<),
   music,
   rw, r, rh, re,
-  qn
+  wn, hn, qn, en
 ) where
 import Note
 import Data.List
@@ -67,12 +67,15 @@ music ess
   where
     makePart (n, es) = Part n es
 
--- |Shorthand for a one beat (one quarter note) rest
+-- |Shorthand for rests
 rw = Rest (1)
-r = Rest (1%4)
 rh = Rest (1%2)
+r = Rest (1%4)
 re = Rest (1%8)
 
--- |Quarter note: takes a note and turn it into a quarter-note event
+-- |Take a note and turn it into an event
+wn = Play (1)
+hn = Play (1%2)
 qn = Play (1%4)
+en = Play (1%8)
 
