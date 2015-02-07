@@ -44,9 +44,23 @@ returnToTonic (Note B Nat o) = [hn $ Note B Nat o] ++ fixOctave (o-4) [c']
 
 fixOctave oo ns = map (\(Play t (Note d a o)) -> (Play t (Note d a (o+oo)))) ns
 
-earTraining1 :: [Note] -> [Event]
-earTraining1 ns = concat $ take 50 $ map (\n -> scale ++ [rw] ++ returnToTonic n ++ [rw]) ns
+makeMusic :: [Note] -> [Event]
+makeMusic ns = concat $ take 50 $ map (\n -> scale ++ [rw] ++ returnToTonic n ++ [rw]) ns
+
+randomsChoice :: RandomGen g => g -> [a] -> [a]
+randomsChoice g xs = map (xs !!) $ randomRs (0, length xs - 1) g
+
+earTraining name es = do
+  g <- newStdGen
+  createMidi ("eartraining/et_"++name++".midi") $ music [makeMusic $ randomsChoice g ns]
+  where
+    ns = map toNote es
+    toNote (Play _ n) = n
 
 main = do
-  g <- newStdGen
-  createMidi "eartraining1.midi" $ music [earTraining1 $ randoms g]
+  earTraining "1" [c, c']
+  earTraining "2" [c, d, b, c']
+  earTraining "3" [c, d, e, a, b, c']
+  earTraining "4" [c, d, e, f, g, a, b, c']
+  earTraining "5" [b_, c, d, e, f, g, a, b, c', d']
+  earTraining "6" [a, b_, c, d, e, f, g, a, b, c', d', e']
