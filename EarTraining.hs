@@ -37,7 +37,7 @@ returnToTonic (Note A Nat o) = [hn $ Note A Nat o] ++ fixOctave (o-4) [b,c'] ++ 
 returnToTonic (Note B Nat o) = [hn $ Note B Nat o] ++ fixOctave (o-4) [c'] ++ [rw]
 
 makeMusic :: Int -> [Note] -> [Event]
-makeMusic i = concat . take 30 . insertEvery i scale . map returnToTonic
+makeMusic i = concat . take (35*(min i 3)) . insertEvery i scale . map returnToTonic
   where
     insertEvery i x xs = [x] ++ take i xs ++ insertEvery i x (drop i xs)
 
@@ -62,3 +62,4 @@ main = do
   earTraining "9" 3 [g_, a_, b_, c, d, e, f, g, a, b, c', d', e', f']
   earTraining "10" 4 [g_, a_, b_, c, d, e, f, g, a, b, c', d', e', f']
   earTraining "11" 5 [g_, a_, b_, c, d, e, f, g, a, b, c', d', e', f']
+  earTraining "12" 999999 [g_, a_, b_, c, d, e, f, g, a, b, c', d', e', f']
