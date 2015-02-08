@@ -42,6 +42,9 @@ voiceLead :: [Vertical] -> [Vertical]
 voiceLead vs = vs
 
 
+-- !!! Suggested approach to analysis:
+--  Do whats good for composition: Give a music, and a potential note to add, and ask what errors/warnings would result
+--  Can then also use this for analysis by stepping through a whole piece building it up (IS THIS TRUE??)
 
 -- !New voice leading module...
 -- Sort out the analysis. Suggest we define new sets of clearer rules :-)

@@ -75,6 +75,17 @@ instance Random Note where
       a = 1 + (c * 2) `div` 12 -- Not right at all
       o = ac `div` 12
 
+{-
+instance Random Note where
+  random g = randomR (Note C Nat 0, Note C Nat 7) g
+  randomR (nlo, nhi) g = (Note (toEnum d) Nat o, g') -- !!! Only handles naturals, no sharps or flats!!
+    where
+      drange = (absDiatonic nlo, absDiatonic nhi)
+      (ad, g') = randomR drange g
+      o = ad `div` 7
+      d = ad `mod` 7
+-}
+
 randomRDuration :: RandomGen g => (Time, Time) -> g -> (Time, g)
 randomRDuration (lo, hi) g = (1 % (pow2 n), g)
   where
