@@ -16,15 +16,6 @@ import System.Random
 
 scale = [c, d, e, f, g, a, b, c', rw]
 
-instance Random Note where
-  random g = randomR (Note C Nat 4, Note C Nat 5) g
-  randomR (nlo, nhi) g = (Note (toEnum d) Nat o, g')
-    where
-      drange = (absDiatonic nlo, absDiatonic nhi)
-      (ad, g') = randomR drange g
-      o = ad `div` 7
-      d = ad `mod` 7
-
 fixOctave oo ns = map (\(Play t (Note d a o)) -> (Play t (Note d a (o+oo)))) ns
 
 returnToTonic :: Note -> [Event]
@@ -37,8 +28,9 @@ returnToTonic (Note A Nat o) = [hn $ Note A Nat o] ++ fixOctave (o-4) [b,c'] ++ 
 returnToTonic (Note B Nat o) = [hn $ Note B Nat o] ++ fixOctave (o-4) [c'] ++ [rw]
 
 makeMusic :: Int -> [Note] -> [Event]
-makeMusic i = concat . take (35*(min i 3)) . insertEvery i scale . map returnToTonic
+makeMusic i = concat . take num . insertEvery i scale . map returnToTonic
   where
+    num = 35 *(min i 3)
     insertEvery i x xs = [x] ++ take i xs ++ insertEvery i x (drop i xs)
 
 
