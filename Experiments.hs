@@ -42,12 +42,24 @@ voiceLead :: [Vertical] -> [Vertical]
 voiceLead vs = vs
 
 
+-- !New voice leading module...
+-- Sort out the analysis. Suggest we define new sets of clearer rules :-)
+
 -- !!! Suggested approach to analysis:
 --  Do whats good for composition: Give a music, and a potential note to add, and ask what errors/warnings would result
 --  Can then also use this for analysis by stepping through a whole piece building it up (IS THIS TRUE??)
 
--- !New voice leading module...
--- Sort out the analysis. Suggest we define new sets of clearer rules :-)
+{-
+parts should be in their ranges
+parts mustnt cross
+parts mustnt overlap
+avoid large leaps
+avoid unisons between parts
+never have consecutive octaves or fifths (including compounds)
+never more than three consecutive of any interval
+avoid going to perfect consonance by similar motion (hidden octaves)
+-}
+
 -- NotesToParts should reassign notes to parts, transposing up or down by octaves as needed, to achieve good voice leading and part writing
 --   Start by transposing the bass to be as close to the previous note as possible
 -- Experiment with arpeggiation
